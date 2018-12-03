@@ -1,0 +1,1006 @@
+a{text-decoration: none;}
+ul{list-style-type: none;margin: 0;padding: 0;}
+html{
+        background: #f5f5f5
+}
+.main-box{
+    width: 1200px;
+    margin: auto;
+    border: 1px solid #e6e6e6;
+}
+.shadow{
+    box-shadow: #e0e4e8 0px 0 33px -1px;
+}
+/* 注册start */
+.register-header{
+     @extend .main-box;
+    background:#f5f5f5;
+    height:60px;
+    line-height: 60px;
+    border: 0 none;
+    .register-logo{
+        margin-right:24px;
+        width: 36px;
+        height:36px;
+        vertical-align: middle;
+    }
+    .register-title{
+        font-size:20px;
+        color:#666666;
+    }
+}
+.register{
+    @extend .main-box;
+    @extend .shadow;
+    border: 0 none;
+    border-radius:8px;
+    background:white;
+    overflow: hidden;
+    .el-step__title{
+        line-height: 60px;
+    }
+    .el-steps--horizontal{
+        padding-top:40px;
+        width: 1220px;
+        margin-left: 164px;
+    }
+    .el-step__title.is-finish,.el-step__title.is-process{
+        font-size: 20px;
+        color:#666666;
+        font-weight:500;
+
+    }
+    .el-step__icon{
+        background: #40b9e6;
+        color: white;
+        width: 28px;
+        height: 28px;
+        border: 0 none;
+    }
+    .is-horizontal .el-step__line{
+        height: 6px;
+        background-color: #e6e6e6;
+    }
+    .el-step__line-inner{
+        border-width: 3px;
+    }
+    .steps-gray{
+        border-color: #e6e6e6;
+        background: #e6e6e6;
+        color: #999999;
+    }
+}
+.register1{
+    margin-top:100px;
+    margin-left:200px;
+    .el-input{
+        width: 40%;
+    }
+    .el-input__inner{
+        width:340px;
+    }
+    .el-form-item{
+        margin-bottom:30px;
+    }
+    .register-agreement{
+        margin-left: 100px;
+        margin-bottom:40px;
+        @extend .el-checkbox__label;
+    }
+    .el-checkbox__input+.el-checkbox__label{
+        font-size:16px;
+        color:#333333;
+    }
+    .el-button--primary{
+        width: 124px;
+    }
+    a{
+        text-decoration: none;
+    }
+}
+.register2{
+    .el-dialog__title{
+        font-size: 16px;
+        font-weight: bold;
+        color:#333;
+    }
+    .el-form-item__label{
+        font-size: 14px;
+        color: #333333;
+        font-weight: bold;
+    }
+    .el-input{
+        width: 100%;
+    }
+    .add-admin-required{
+        .el-form-item__label:before{
+            content: '*';
+            color: #f56c6c;
+            margin-right: 4px;
+
+
+        }
+    }
+    .add-admin{
+        position: relative;
+        width: 50px;
+        display: inline-block;
+        color: #666666;
+        font-size: 16px;
+        line-height: 2;
+        margin-top: -7px;
+        text-align: center;
+        img:first-child{
+            position: absolute;
+            right: 0;
+            top:0;
+        }
+    }
+    .add-admin2{
+        margin-left: 25px;
+        margin-top: -7px;
+        vertical-align: top;
+    }
+    .enterprise-audit-box{
+        padding:0;
+        margin:0 0 64px 100px;
+        .el-upload{
+            width: 168px;
+            height: 168px;
+            position: relative;
+            background:#f5f5f5 url('/static/images/upload.png')center no-repeat;
+            background-position-y: 30px;
+            img{
+                width: 100%;
+                height: 100%;
+            }
+            ::after {
+                content: '只支持JPG\PNG格式不超过5M';
+                width:110px;
+                position: absolute;
+                top: 95px;
+                left:28px;
+                z-index: 1;
+                color: #999999;
+                font-size: 12px;
+                line-height: 1.5;
+            }
+            ::before {
+                content: '上传营业执照';
+                width:100px;
+                position: absolute;
+                top: 71px;
+                left:30px;
+                z-index: 1;
+                color: #999999;
+                font-size: 14px;
+            }
+        }
+        h4{
+            margin:35px 0 15px 0;
+            padding: 0;
+            font-size: 16px;
+            color: #666666;
+        }
+    }
+    // .el-dialog__header::after {
+    //     content: '';
+    //     position: absolute;
+    //     bottom: 0;
+    //     left: 0;
+    //     width: 100%;
+    //     border-bottom: 1px solid #e6e6e6;
+    // }
+
+    // .el-dialog__header {
+    //     position: relative;
+    //     padding: 20px;
+    // }
+    .scale-dialog{
+        ul+div{
+            display: flex;
+            justify-content: space-between;
+            width: 320px;
+            margin: auto;
+        }
+        ul{
+            display:flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            list-style-type: none;
+            margin: 0 auto;
+            width: 400px;
+            padding:0px;
+            padding-bottom:30px;
+            li{
+                cursor: pointer;
+                border:1px solid #f5f5f5;
+                text-align: center;
+                margin-bottom: 30px;
+                flex-basis: 116px;
+                height:32px;
+                line-height: 32px;
+                border-radius:4px;
+                font-size:16px;
+                color:#666666;
+                background: #f5f5f5;
+            }
+            .active{
+                color:#45bbf8;
+                border:1px solid #45bbf8;
+            }
+        }
+    }
+    .addAdmin-dialog{
+        width:340px;
+        margin:auto;
+        >div{
+            margin-bottom:15px;
+            font-size: 16px;
+            color:#666666
+        }
+        .el-form-item{
+            margin-bottom: 30px!important;
+        }
+        .el-input{
+            margin-bottom: 0px!important;
+             &:first-child{
+                 margin-bottom: 90px;
+            }
+        }
+        .el-input:nth-child(4){
+            margin-bottom: 60px;
+        }
+        .admin-footer{
+            display: flex;
+            justify-content: space-between;
+            width: 320px;
+            margin: auto;
+        }
+    }
+    .el-dialog__wrapper:last-child{
+        .el-dialog{
+            width: 516px!important;
+            height: 424px;
+            border-radius: 8px;
+        }
+        .el-dialog__header{
+            padding: 0;
+            height: 64px;
+            line-height: 64px;
+            font-size: 16px;
+            color: #333333;
+            font-weight: bold;
+            border: 0 none;
+            border: 1px solid #e6e6e6;
+        }
+    }
+    .myJob-dialog{
+        ul{
+            list-style-type: none;
+            margin-bottom: 80px;
+            li{
+                 cursor: pointer;
+                 font-size: 16px;
+                 color:#333333;
+                 height:40px;
+                 line-height: 40px;
+                 padding-left: 15px;
+                 width: 328px;
+                 margin: auto;
+                 margin-top: 17px;
+            }
+            .active{
+                background: #f4f6f8 url(/static/images/isSelect.png)no-repeat center;
+                background-position-x: 313px
+            }
+        }
+         .admin-footer{
+            width:340px;
+            margin:auto;
+            display: flex;
+            justify-content: space-between;
+            width: 340px;
+            margin: auto;
+        }
+    }
+    .cancel{
+            color:#40b9e6;
+            background:white;
+            border:1px solid #40b9e6;
+    }
+}
+.register3{
+    display: flex;
+    color: #666666;
+    flex-direction: column;
+    width: 50%;
+    margin: auto;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    img{
+        width: 72px;
+        margin-top: 50px;
+        margin-bottom: 30px;
+    }
+    h3{
+        margin: 0;
+        padding:0;
+        font-size: 24px;
+    }
+    h5{
+        margin: 0;
+        padding:0;
+        margin-top: 30px;
+        margin-bottom: 70px;
+        background:transparent url('/static/images/register3.png') right center no-repeat;
+    }
+    button{
+        width: 124px;
+        height: 40px;
+    }
+}
+/* 注册end */
+/* 通讯录start */
+.address-book{
+    .address-book-manager{
+        @extend .main-box;
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-between;
+        border: 0 none;
+        .manager-tree{
+            background: #f6f6f6;
+            .el-tree-node__content{
+                padding-left: 13px!important;
+                height: 36px;
+                &::after{
+                    content: '';
+                    position: absolute;
+                    width: 20px;
+                    height: 17px;
+                    display: inline-block;
+                    margin-left: 28px;
+                    background: url(/static/images/file.png);
+                    background-size: 100%;
+                }
+            }
+            .is-current {
+                background: white;
+                color: #40b9e6;
+                border: 1px solid #a1d3e6;
+                border-radius: 4px;
+            }
+            .el-tree-node__children{
+                .el-tree-node__expand-icon {
+                    &:before{
+                        content:'';
+                        margin-right: 35px;
+                    }
+                }
+            }
+            .el-tree-node__expand-icon{
+                color: #999999;
+                font-size: 24px;
+                padding: 0!important;
+                margin-right: 35px;
+            }
+        }
+        .manager-left{
+            width: 288px;
+            border: 1px solid #dddddd;
+            background: #f6f6f6;
+            min-height: 800px;
+            padding-top: 10px;
+            .left-top{
+                padding: 10px 15px;
+                img{
+                    margin-right: 15px;
+                }
+            }
+            .manager-tabs{
+                padding: 0 15px;
+                font-size: 16px;
+                color: #333333;
+                .el-tabs__nav-scroll{
+                    border-radius: 4px;
+                }
+                .el-tabs__active-bar{
+                    height: 0;
+                }
+                .el-tabs__nav{
+                    width: 100%;
+                    text-align: center;
+                    .el-tabs__item{
+                        font-size: 16px;
+                        color: #333333;
+                        width: 50%;
+                        padding: 0;
+                        background: #e9eaeb;
+                    }
+                    .is-active{
+                        color: white;
+                        background: #40b9e6;
+                    }
+                }
+            }
+        }
+        .manager-right{
+            position: relative;
+            display: flex;
+            flex:1;
+            background:white;
+            border-top: 1px solid #e6e6e6;
+            border-right: 1px solid #e6e6e6;
+            border-bottom: 1px solid #e6e6e6;
+            .department-box{
+                width: 100%;
+                padding:0 30px;
+                position: relative;
+                .go-seting{
+                    position: absolute;
+                    right: 30px;
+                    top:30px;
+                    a{
+                        position: relative;
+                        color: #333333;
+                        font-size: 14px;
+                        margin-left:30px;
+                    }
+                    a:first-child::after{
+                        position: absolute;
+                        top:0;
+                        right: -15px;
+                        content:'';
+                        width: 1px;
+                        height: 100%;
+                        background: #e6e6e6;
+                    }
+                }
+                h1{
+                    color: #999999;
+                    font-size: 20px;
+                    font-weight: 500;
+                    letter-spacing: 2px;
+                    height: 80px;
+                    line-height: 80px;
+                    padding: 0;
+                    margin: 0;
+                }
+                .button-seting{
+                    padding: 12px 0;
+                    width: 100%;
+                    background: #f6f6f6;
+                    .el-button{
+                        margin-left: 10px;
+                    }
+                    .el-button:hover{
+                        color: #606266;
+                        background: white;
+                    }
+                }
+            }
+            .add-box{
+                width: 100%;
+                .el-dialog{
+                    border-radius: 8px;
+                    .el-dialog__header{
+                        font-size: 18px;
+                        background:#40b9e6;
+                        height: 60px;
+                        line-height: 60px;
+                        padding:0;
+                        margin:0;
+                        color: white;
+                        border-top-right-radius: 8px;
+                        border-top-left-radius: 8px;
+                    }
+                    .el-dialog__body{
+                        padding: 0;
+                    }
+                    .el-dialog__title{
+                        color: white;
+                    }
+                }
+                .people-info{
+                    padding: 12px 0;
+                    background: #f6f6f6;
+                    padding-left: 50px;
+                    color: #666666;
+                }
+                .box-form{
+                    margin-left: 30px;
+                    margin-top: 35px;
+                    .el-input__inner{
+                        width: 360px;
+                        height: 36px;
+                    }
+                }
+                .people-footer{
+                    display: flex;
+                    position: absolute;
+                    bottom:0;
+                    width: 100%;
+                    border-top:1px solid #e6e6e6;
+                    height: 60px;
+                    align-items: center;
+                    justify-content: flex-end;
+                    button{
+                         margin-left: 12px;
+                    }
+                    button:last-child{
+                        margin-right: 30px;
+                    }
+                }
+                .addPeople-dialog{
+                    .add-body{
+                        display: flex;
+                         /*滚动条样式*/
+                        ul::-webkit-scrollbar {/*滚动条整体样式*/
+                            width: 2px;     /*高宽分别对应横竖滚动条的尺寸*/
+                            height: 2px;
+                        }
+                        ul::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+                            // border-radius: 5px;
+                            // -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+                            background: #c1c1c1;
+                        }
+                        ul::-webkit-scrollbar-track {/*滚动条里面轨道*/
+                            // -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+                            // border-radius: 0;
+                            background: #e5e5e5;
+                        }
+                        ul{
+                            position: relative;
+                            display: inline-block;
+                            width: 50%;
+                            height: 420px;
+                            overflow-y: scroll;
+                            padding: 20px 0;
+                            font-size: 16px;
+                            color: #333333;
+                            border-bottom: 1px solid #e5e5e5;
+                            span{
+                                padding-bottom: 12.5px;
+                                padding-left: 40px;
+                                display: inline-block;
+                            }
+                            li{
+                                padding: 7.5px 20px 7.5px 40px;
+                                label{
+                                    margin-right: 20px;
+                                    font-size: 14px;
+                                    border-radius: 50%;
+                                    width: 45px;
+                                    height: 45px;
+                                    overflow: hidden;
+                                    line-height: 45px;
+                                    vertical-align: middle;
+                                    color: white;
+                                    display: inline-block;
+                                    text-align: center;
+                                    background:#40b9e6;
+                                }
+                            }
+                            .active{
+                                background:#f5f5f5  url(/static/images/isSelect.png)right center no-repeat;
+                                background-position-x: 420px;
+                            }
+                            img{
+                                float:right;
+                                margin-top: 13px;
+                                &:hover{
+                                    cursor: pointer;
+                                }
+                            }
+                        }
+                        ul:first-child ::after{
+                            // position: absolute;
+                            // content:'';
+                            // height: 440px;
+                            // width: 1px;
+                            // right: 0;
+                            // top:20px;
+                            // background: #e5e5e5;
+                        }
+                        .remove{
+                            .active{
+                                background:#f5f5f5
+                            }
+                        }
+                    }
+                    .add-footer{
+                        display: flex;
+                        justify-content: flex-end;
+                        align-items: center;
+                        height: 76px;
+                        padding-right: 20px;
+                        button{
+                            width: 106px;
+                            height: 36px;
+                        }
+                    }
+                }
+                .add-class-dialog{
+                    @extend .manager-tree;
+                    .is-current{
+                        border: 0;
+                        color: #333333;
+                        .el-tree-node__content{
+                            background:#f6f6f6 url(/static/images/isSelect.png) right no-repeat;
+                            background-position-x: 420px;
+                            background-position-y: 10px;
+                        }
+                    }
+                    // .el-tree-node__content:hover{
+                    //         background: none!important;
+                    // }
+                    .add-body2 {
+                        ul .el-tree-node__label{
+                            margin: 0;
+                            padding: 0;
+
+                        }
+                        .class-del{
+                            position: absolute;
+                            right: 20px;
+                            margin-top: 0;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .import-export{
+        @extend .main-box;
+        header{
+            position: relative;
+            width: 100%;
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+            font-size: 20px;
+            color: #666666;
+            a{
+                position: absolute;
+                left:30px;
+                color: #666666;
+                font-size: 14px;
+                .back{
+                    width: 15px;
+                    height: 15px;
+                    margin-right: 5px;
+                    display: inline-block;
+                    background: url(/static/images/back.png);
+                    background-repeat: no-repeat;
+                    background-size: 10px 15px;
+                    vertical-align: middle;
+                }
+            }
+        }
+        .tabs{
+            margin-left: 80px;
+            margin-top: 50px;
+            section{
+                display: flex;
+                margin-top: 50px;
+                .left ul{
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    margin-right: 15px;
+                    li{
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        width: 10px;
+                        height: 10px;
+                        background: #e6e6e6;
+                        border-radius: 50%;
+                        margin-top: 10px;
+                    }
+                    li:first-child{
+                        width: 50px;
+                        height: 50px;
+                        border: 1px solid #999999;
+                        border-radius: 50%;
+                        color: #999999;
+                        font-size: 24px;
+                        background: white;
+                        margin-bottom: 10px;
+                        margin-top: 0px;
+                    }
+                    li:last-child{
+                        @extend li:first-child;
+                        margin-top: 20px;
+                    }
+                }
+                .right{
+                    h1{
+                        font-size: 18px;
+                        color: #333333;
+                    }
+                    .file-down{
+                       width: 280px;
+                       height: 50px;
+                       border-radius: 4px;
+                       border: 1px solid #facd89;
+                       font-size: 16px;
+                       color: #666666;
+                       background: #fffada;
+                       line-height: 50px;
+                       display: flex;
+                       justify-content: space-around;
+                       align-items: center;
+                       margin-bottom: 50px;
+                        a{
+                            font-size: 14px;
+                            color: #333333;
+                            background: #f6f6f6;
+                            width: 80px;
+                            height: 30px;
+                            text-align: center;
+                            line-height: 30px;
+                            border: 1px solid #999999;
+                            border-radius: 4px;
+                        }
+                    }
+                    .file-content{
+                        width: 620px;
+                        height: 240px;
+                        border: 1px solid #e6e6e6;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        // justify-content: center;
+                        i{
+                            width: 52px;
+                            height: 60px;
+                            display: block;
+                            margin-top: 80px;
+                            margin-bottom: 15px;
+                            background: url(/static/images/grayUpload.png);
+                        }
+                        .active{
+                            background: url(/static/images/greenUpload.png);
+                        }
+                        .file-export{
+                            margin-top: 20px;
+                            width: 90px;
+                            height: 30px;
+                            border: 1px solid #e6e6e6;
+                            line-height: 30px;
+                            border-radius: 8px;
+                        }
+                    }
+                    .file-footer{
+                        height: 60px;
+                        border: 1px solid #e5e5e5;
+                        line-height: 65px;
+                        border-top: 0;
+                        padding-left: 25px;
+                        color: #666666;
+                        font-size: 16px;
+                        span{
+                            border: 1px solid #e6e6e6;
+                            display: inline-block;
+                            width: 280px;
+                            height: 36px;
+                            line-height: 36px;
+                            text-align: left;
+                            padding-left: 50px;
+                            position: relative;
+                            &:after{
+                                position: absolute;
+                                left:20px;
+                                top:9px;
+                                content:'';
+                                width: 20px;
+                                height: 17px;
+                                background: url(/static/images/file.png);
+                                background-size: 100%;
+                                background-repeat: no-repeat;
+                            }
+                        }
+                    }
+                    .file-down-msg{
+                        font-size: 18px;
+                        color: #999999;
+                    }
+                    .file-down-msg-success{
+                        font-size: 16px;
+                        color: #333333;
+                    }
+                }
+            }
+        }
+    }
+}
+/* 通讯录end */
+/* 登陆主页start */
+.home-box{
+    @extend .main-box;
+    @extend .shadow;
+    min-height: 800px;
+    border: 0 none;
+    display: flex;
+    margin-top: 20px;
+    background:white;
+    .left{
+        width: 290px;
+        border-right: 1px solid #e6e6e6;
+        >div{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            font-size: 16px;
+            border-bottom: 1px solid #e6e6e6;
+            width: 80%;
+            margin: auto;
+            img{
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+            }
+            span{
+                margin-bottom: 30px;
+                color: #30a0ff;
+            }
+        }
+        ul{
+            width: 80%;
+            margin: auto;
+            padding: 10px 0 30px 0;
+            border-bottom: 1px solid #e6e6e6;
+            li{
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                color: #666666;
+                font-size: 16px;
+                margin-top: 20px;
+            }
+        }
+    }
+    .right{
+        width: 70%;
+        position: relative;
+        .top{
+            >img{
+                margin: 40px 70px 50px;
+                width: 770px;
+                height: 268px;
+                border-radius: 8px;
+            }
+            h1{
+                font-size: 18px;
+                color: #333333;
+                margin:50px 0 60px 80px;
+                width: 100%;
+            }
+            .top-close{
+                cursor: pointer;
+                position: absolute;
+                right: 21px;
+                top:68px;
+                font-size: 14px;
+                color: #999999;
+                img{
+                    margin-left: 10px;
+                    vertical-align: middle;
+                }
+            }
+            div{
+                display: flex;
+                justify-content: space-between;
+                padding-left: 5%;
+                ul{
+                    margin: 0;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    color: #666666;
+                    text-align: center;
+                    width: 33.33%;
+                    li:nth-child(2){
+                        margin: 30px 0;
+                    }
+                    li:last-child{
+                        color: #45bbf8;
+                        font-size: 14px;
+                    }
+                }
+            }
+        }
+        .bottom{
+            h1{
+                font-size: 18px;
+                color: #333333;
+                margin:50px 0 60px 80px;
+                width: 100%;
+            }
+            ul{
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: flex-start;
+                padding-left: 12%;
+                a{
+                    width: 25%;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    margin-bottom: 80px;
+                    span{
+                        font-size: 18px;
+                        color: #666666;
+                        margin-top: 20px;
+                    }
+                }
+            }
+        }
+    }
+}
+/* 登陆主页end */
+/* 考勤统计start */
+.time-statistics{
+    margin-top: 20px;
+    @extend .main-box;
+    background: white;
+    .tabs{
+        margin: 30px;
+        .el-tabs__item{
+            width: 120px;
+            height: 50px;
+            text-align: center;
+            line-height: 50px;
+            font-size: 14px;
+            color: #333333;
+        }
+        .el-table th{
+            background-color: #f6f6f6;
+            padding: 8px 0;
+        }
+        .set{
+            color: #666666;
+        }
+        .del{
+            color: #f25643;
+        }
+        .tab-header{
+            color: #666666;
+            margin: 10px 0 25px 0;
+            i{
+                line-height: 30px;
+            }
+            .header-select1{
+                width: 150px;
+                input{
+                    width: 150px;
+                    height: 30px;
+                }
+            }
+            .header-select2{
+                input{
+                    width: 100px;
+                    height: 30px;
+                }
+            }
+            .header-select3{
+                input{
+                    width: 150px;
+                    height: 30px;
+                }
+            }
+            .header-select4{
+                input{
+                    width: 150px;
+                    height: 30px;
+                }
+            }
+        }
+    }
+}
+/* 考勤统计end */
