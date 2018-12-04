@@ -2,7 +2,7 @@
 	<div class="title">
 			<div class="back" @click="backToUp">
 				<img src="/static/images/back.png" alt>
-				<span>返回</span>
+				<span>back</span>
 			</div>{{titleInfo.centerTitle}}
 			<div class="status" v-if="titleInfo.rightTitle">
 				<span>{{titleInfo.rightTitle.isRelease?'已发布':'未发布'}}</span>
