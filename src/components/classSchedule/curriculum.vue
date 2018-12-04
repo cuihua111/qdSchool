@@ -10,20 +10,30 @@
       <div class="body">
         <div class="columns" v-for="(item, index) in courseData" :key="index">
           <div
-            class="rows hasCourse"
+            class="rows"
             v-if="item.list_course_period.length>0"
             v-for="(item1, index1) in item.list_course_period"
             :key="index1"
           >
-            <p>
+            <p class="hasCourse">
               <span>{{item1.subjectName}}</span>
               <span class="course_desc">{{item1.course_desc}}</span>
               <span>{{item1.nickname_teacher}}</span>
-              <s @click="$router.push({path:`/CourseInfo/${item1.id}`})">查看</s>
+              <s @click="$router.push({path:`/CourseInfo/${item1.id}`,query:{currentClass}})">查看</s>
             </p>
             <div class="operationBox">
               <span class="delete"></span>
               <span class="edit" @click="editCourse(item1, item)"></span>
+            </div>
+            <div
+              class="rows noCouresCh"
+              v-for="(item2, index2) in getLength(item.list_course_period.length)"
+              :key="index2+'2'"
+            >
+              <p @click="addCourse(item)">
+                <img src="/static/images/file.png" alt>
+                <span>添加</span>
+              </p>
             </div>
           </div>
           <div
@@ -51,6 +61,7 @@ import {
   nextYear
 } from "@/utils/mixin";
 export default {
+  props: ["classID","currentClass"],
   data() {
     return {
       courseData: []
@@ -93,14 +104,33 @@ export default {
       return res;
     }
   },
+  watch: {
+    classID() {
+      this.getClass();
+    }
+  },
   methods: {
+    getLength(u) {
+      if (u >= 3) {
+        return 0;
+      } else {
+        return 3 - u;
+      }
+    },
     addCourse(data) {
-      this.$router.push({ path: "/AddCourse", query: {addData: data.date}});
+      console.log(data)
+      this.$router.push({
+        path: "/AddCourse",
+        query: {
+          addData: data.date,
+          currentClass: this.currentClass
+        }
+      });
     },
     getClass(id) {
       this.$store
         .dispatch("GetAllCourseForClass", {
-          classID: 28,
+          classID: this.classID,
           date_start: "2018-12-01",
           date_end: "2018-12-31"
         })
@@ -124,7 +154,7 @@ export default {
     }
   },
   mounted() {
-    this.getClass();
+    // this.getClass();
   },
   created() {}
 };
@@ -176,6 +206,19 @@ export default {
         &:first-child {
           border-top: 1px solid #e6e6e6;
         }
+        .hasCourse {
+          &:hover {
+            transition: all 1s;
+            background-color: rgba(0, 0, 0, 0.5);
+            s {
+              display: block;
+              color: #fff;
+            }
+          }
+        }
+        .hasCourse:hover + .operationBox {
+          display: block;
+        }
         p {
           margin: 0;
           padding: 35px 0;
@@ -226,20 +269,18 @@ export default {
             }
           }
         }
-        &.hasCourse {
+        &.noCoures {
+          p {
+            display: none;
+          }
           &:hover {
             transition: all 1s;
-            background-color: rgba(0, 0, 0, 0.5);
-            s {
-              display: block;
-              color: #fff;
-            }
-            .operationBox {
-              display: block;
+            p {
+              display: flex;
             }
           }
         }
-        &.noCoures {
+        .noCouresCh {
           p {
             display: none;
           }

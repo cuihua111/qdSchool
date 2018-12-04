@@ -233,7 +233,7 @@ export default new Router({
           path:'/ClassSchedule',
           name:'ClassSchedule',
           component:ClassSchedule,
-          meta:{keepAlive:true}
+          meta:{keepAlive:false}
         },
         {
           path:'/AddCourse',
@@ -245,7 +245,7 @@ export default new Router({
           path:'/CourseInfo/:id',
           name:'CourseInfo',
           component:CourseInfo,
-          meta:{keepAlive:true}
+          meta:{keepAlive:false}
         },
         {
           path: 'addSchool',

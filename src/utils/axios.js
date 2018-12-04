@@ -6,16 +6,16 @@ import {
   getSessionStorage,
   removeSessionStorage
 } from '@/utils/mixin';
-import {Loading,Message} from 'element-ui'
+import { Loading, Message } from 'element-ui'
 
 let loadingInstance;
 class Http {
   constructor() {
     //this.Domain = 'http://123.207.88.200:9001/qidianSystem';  //原始
-     this.Domain = 'http://123.207.88.200:9000/singcampus';
+    this.Domain = 'http://123.207.88.200:9000/singcampus';
   }
 
-  require(options) {
+  require(options) {  
     if (!options.api) throw new Error('api 不能为空');
     if (!options.param) {
       options.param = {}
@@ -24,31 +24,32 @@ class Http {
     if (!options.methods) {
       options.methods = 'POST'
     }
-     //不传递方法默认为POST
+    //不传递方法默认为POST
     if (!options.loadingVisble) {
       options.loadingVisble = true
     }
-     // 不传递默认开启loading
+    // 不传递默认开启loading
     if (!options.loadingText) {
       options.loadingText = '加载中...'
     }
 
     loadingInstance = Loading.service(options);
-    axios.defaults.timeout =  10000;
+    axios.defaults.timeout = 10000;
     return new Promise((resolve, reject) => {
       return axios({
         method: options.methods,
         url: options.api,
         baseURL: this.Domain,
         headers: {
-          'Content-Type':'application/json',
-          'token':getSessionStorage('token'),
-          'uid':getSessionStorage('uid'),
-          'terminal-Type':'2'
+          'Content-Type': 'application/json',
+          'token': JSON.parse(getSessionStorage('userInfo')).userAccount.nIMToken,
+          'uid': JSON.parse(getSessionStorage('userInfo')).userAccount.uid,
+          'terminal-Type': '4'
         },
         data: options.param
       }).then(response => {
         loadingInstance.close();
+
         if (response.data.code === 0) { //请求成功
           return resolve(response.data.data)
         } else {
@@ -56,15 +57,15 @@ class Http {
           //   //   router.push('/Login')
           // }
           Message({
-            message:response.data.message,
-            type:'error',
+            message: response.data.message,
+            type: 'error',
           });
           return reject(response.data)
         }
       }, error => {
         Message({
-          message:'网络错误,请刷新重试',
-          type:'error',
+          message: '网络错误,请刷新重试',
+          type: 'error',
         });
         loadingInstance.close();
         return reject(error)

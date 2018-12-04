@@ -10,12 +10,13 @@
       <div class="content">
         <div class="classList">
           <div>当前班级：</div>
-          <div>重点2班</div>
+          <div>{{currentClass}}</div>
           <ul>
             <li
               :class="{checked:liCheckedIndex==index}"
               v-for="(item,index) in classList"
               :key="index"
+              @click="chooseClass(index,item.classID,item.className)"
             >{{item.className}}</li>
           </ul>
         </div>
@@ -45,47 +46,7 @@
               </div>
             </el-aside>
             <el-main>
-              <curriculum></curriculum>
-              <!-- <div style="overflow-x:scroll">
-                <div class="headerDiv">
-                  <div v-for="(item,index) in dayList" :key="index">
-                    <span>{{item}}</span>
-                    <span>{{item}}</span>
-                  </div>
-                </div>
-                <div class="mainDiv">
-                  <ul v-for="(item,index) in courseList" :key="index">
-                    <li
-                      class="canSee"
-                      v-for="(itemSub,indexSub) in item.list_course_period"
-                      :key="indexSub"
-                      v-if="item.list_course_period.length!=0"
-                    >
-                      <p>
-                        <span>{{itemSub.subjectName}}</span>
-                        <span>{{itemSub.course_desc}}</span>
-                        <span>{{itemSub.nickname_teacher}}</span>
-                        <s @click="$router.push({path:`/CourseInfo/${itemSub.id}`})">查看</s>
-                      </p>
-                      <div class="operationBox">
-                        <span class="delete"></span>
-                        <span class="edit"></span>
-                      </div>
-                    </li>
-                    <li
-                      class="add"
-                      v-if="item.list_course_period.length==0"
-                      v-for="item1 in 3"
-                      :key="item1"
-                    >
-                      <p>
-                        <img src="/static/images/file.png" alt>
-                        <span>添加</span>
-                      </p>
-                    </li>
-                  </ul>
-                </div>
-              </div> -->
+              <curriculum :currentClass="currentClass" :classID="classID"></curriculum>
             </el-main>
           </el-container>
         </div>
@@ -100,12 +61,14 @@ import moment from "moment";
 export default {
   data() {
     return {
-      classList: [],
-      courseList: [],
+      classList: [],//所有班级
+      // courseList: [],
       year: new Date().getFullYear(),
       month: new Date().getMonth(),
       dayList: [],
-      liCheckedIndex: 0
+      liCheckedIndex: 0, //侧面班级高亮索引
+      classID:'',//班级id
+      currentClass:'',//当前班级
     };
   },
   components: {
@@ -129,8 +92,11 @@ export default {
       let _this = this;
       this.$store.dispatch("GetAllSubClassList", { schoolID: id }).then(res => {
         this.classList = res.subClassList;
+        this.classID=res.subClassList[0].classID
+        this.currentClass=res.subClassList[0].className
       });
     },
+    //获取月份
     getMounth() {
       let dt = new Date(),
         flag =
@@ -170,26 +136,31 @@ export default {
           }
         }
       }
-      console.log(this.dayList, sssss);
     },
-    //获取课程
-    getClass(id) {
-      this.$store
-        .dispatch("GetAllCourseForClass", {
-          classID: 28,
-          date_start: "2018-10-10",
-          date_end: "2018-12-01"
-        })
-        .then(res => {
-          console.log(res);
-          this.courseList = res.courseList;
-        });
+    //点击切换班级
+    chooseClass(index,classID,name){
+      this.liCheckedIndex=index;
+      this.classID=classID
+      this.currentClass=name
     }
+    // //获取课程
+    // getClass(id) {
+    //   this.$store
+    //     .dispatch("GetAllCourseForClass", {
+    //       classID: 28,
+    //       date_start: "2018-11-01",
+    //       date_end: "2018-11-30"
+    //     })
+    //     .then(res => {
+    //       console.log(res);
+    //       this.courseList = res.courseList;
+    //     });
+    // }
   },
   mounted() {
     this.schoolID = JSON.parse(getSessionStorage("userInfo")).schoolId;
     this.getAllSubClassList(this.schoolID);
-    this.getClass();
+    // this.getClass();
     this.getMounth();
   }
 };
@@ -260,6 +231,7 @@ p {
             text-align: center;
             background-color: #f4f4f4;
             position: relative;
+            cursor: pointer;
             &.checked {
               background-color: #4dc2fd;
               color: #fff;
