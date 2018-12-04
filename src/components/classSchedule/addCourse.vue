@@ -6,8 +6,8 @@
         <div class="aside">
           <div
             class="font20"
-          >星期{{getDateW(courseForm.startTime)}}({{$moment(courseForm.startTime).format('HH')>12?'下午':'上午'}})</div>
-          <div class="font16 one">{{$moment(courseForm.startTime).format('YYYY年MM月DD日')}}</div>
+          >星期{{getDateW(currentDate.date)}}({{$moment(currentDate.date).format('HH')>12?'下午':'上午'}})</div>
+          <div class="font16 one">{{$moment(currentDate.date).format('YYYY年MM月DD日')}}</div>
           <div class="font16 two">所在班级</div>
           <div class="font20">sadasd</div>
         </div>
@@ -16,20 +16,16 @@
             <el-form label-width="90px" :model="courseForm">
               <el-form-item label="上课科目：">
                 <!-- <div v-if="!isEdit">{{courseDetails.subjectName}}</div> -->
-                <el-radio-group v-model="courseForm.subjectName">
+                <el-radio-group v-model="courseForm.subjectID">
                   <el-radio
                     v-for="item in courseList"
                     :key="item.name"
-                    :label="item.name"
+                    :label="item.id"
                   >{{item.name}}</el-radio>
                 </el-radio-group>
               </el-form-item>
               <el-form-item label="上课时间：">
-                <div
-                  v-if="!isEdit"
-                >
-                {{$moment(courseForm.startTime).format('HH:mm')}} - {{$moment(courseForm.endTime).format('HH:mm')}}</div>
-                <el-select v-else v-model="timeChoose" placeholder="请选择">
+                <el-select v-model="timeChoose" placeholder="请选择">
                   <el-option
                     v-for="item in options"
                     :key="item.value"
@@ -39,13 +35,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="任课老师：">
-                <div v-if="!isEdit">
-                  <span v-for="(item,index) in courseForm.teacherNameList" :key="index">
-                    {{item}}
-                    <b v-if="index!=courseForm.teacherNameList.length-1">、</b>
-                  </span>
-                </div>
-                <el-select v-else multiple v-model="courseForm.teacherID" placeholder="请选择">
+                <el-select multiple v-model="courseForm.teacherID" placeholder="请选择">
                   <el-option
                     v-for="item in teacherList"
                     :key="item.uid"
@@ -55,13 +45,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="上课班级：">
-                <div v-if="!isEdit">
-                  <span v-for="(item,index) in courseForm.classNameList" :key="index">
-                    {{item.className}}
-                    <b v-if="index!=courseForm.classNameList.length-1">、</b>
-                  </span>
-                </div>
-                <el-select v-else multiple v-model="courseForm.classIDList" placeholder="请选择">
+                <el-select multiple v-model="courseForm.classIDList" placeholder="请选择">
                   <el-option
                     v-for="item in classList"
                     :key="item.classID"
@@ -71,8 +55,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="上课内容：">
-                <div v-if="!isEdit">{{courseForm.course_desc}}</div>
-                <el-input :value="courseForm.course_desc" v-else type="textarea"></el-input>
+                <el-input v-model="courseForm.course_desc" type="textarea"></el-input>
               </el-form-item>
               <el-form-item>
                 <div class="kejianList">
@@ -106,7 +89,7 @@
           </div>
           <div class="operationBtnList" :style="isRelease==false?styleObj:''">
             <div class="threeBtn">
-              <el-button>取消</el-button>
+              <el-button @click="cancel">取消</el-button>
               <el-button class="confirm" type="primary" @click="save">保存</el-button>
               <!-- <el-button @click="isEdit=!isEdit">编辑</el-button>
               <el-button @click="deleteCourse">删除</el-button> -->
@@ -172,16 +155,12 @@ export default {
 				teacherID: [],
 				classIDList: [],
 				course_desc: '',
-				accessoryList: [
-					{
-						type_material: '',
-						accessoryURL: ''
-					}
-				],
-				kejianList: [],
+				accessoryList: [],
+				kejianList: [0],
 				is_topublish: 0
       },
-      initData:null
+      initData:null,
+      currentDate: null
     };
 	},
 	components: {
@@ -189,12 +168,51 @@ export default {
 		// curriculum: () => import('@/components/curriculum')
 	},
   methods: {
+    cancel(){
+      this.$router.go(-1)
+    },
 		save(){
       console.log(this.timeChoose)
       this.courseForm.startTime=this.timeChoose.split('-')[0]
+      this.courseForm.startTime=this.currentDate.split(' ')[0] + ' ' + this.courseForm.startTime + ':00'
       this.courseForm.endTime=this.timeChoose.split('-')[1]
+      this.courseForm.endTime=this.currentDate.split(' ')[0] + ' ' + this.courseForm.endTime + ':00'
+
 			this.$store
-        .dispatch("CreateCourse", this.courseForm)
+        // .dispatch("CreateCourse", this.courseForm)
+        .dispatch("CreateCourse", {
+  "startTime": "2018-10-11 15:00:00",
+  "endTime": "2018-10-11 17:00:00",
+  "subjectID": 3,
+  "teacherID": [341,339,10],
+  "classIDList": [
+   28,
+    29
+  ],
+  "course_desc": "课程介绍",
+  "accessoryList": [
+    {
+      "type_material": 0,
+      "accessoryURL": "http://pgzpa5qd6.bkt.clouddn.com/20181112143744011.jpg"
+    },
+    {
+      "type_material": 0,
+      "accessoryURL": "http://pgzpa5qd6.bkt.clouddn.com/20181112143656919.jpg"
+    },
+    {
+      "type_material": 1,
+      "accessoryURL": "http://pgzpa5qd6.bkt.clouddn.com/20181112143656919.jpg"
+    },
+    {
+      "type_material": 1,
+      "accessoryURL": "http://pgzpa5qd6.bkt.clouddn.com/20181112143656919.jpg"
+    }
+  ],
+  "kejianList": [
+ 0
+  ],
+  "is_topublish": 0
+})
         .then(res => {
 					console.log(res);
 					this.$router.go(-1)
@@ -256,8 +274,12 @@ export default {
     },
     //上传图片成功回调
     uploadSuccess(res, file, lll) {
-      console.log(res, file, lll);
-      this.uploadArr.push(this.tokenOption.bucketUrl + res.key);
+      console.log(res, file, lll, this.tokenOption.bucketUrl);
+      this.uploadArr.push(this.tokenOption.bucketUrl + '/' + res.key);
+      this.courseForm.accessoryList.push({
+        type_material: file.raw.type == 'image/png' ? 0: 1,
+        accessoryURL: this.tokenOption.bucketUrl + '/' + res.key
+      })
       console.log(this.uploadArr.length);
     },
     //获取七牛云token
@@ -284,13 +306,19 @@ export default {
     this.getUploadToken();
 	},
 	created(){
-		this.initData = JSON.parse(this.$route.query.editData) || null
+    console.log(this.$route.query.editData, 'sssss')
+		this.initData = this.$route.query.editData || null
+    this.addData = this.$route.query.addData || null
 		if(this.initData){
+      this.initData = JSON.parse(this.initData)
+      console.log(this.initData, 'sssss')
 			this.isEdit = this.initData.isEdit
-      // this.courseDetails = this.initData
+      this.titleInfo.centerTitle = this.isEdit ? '编辑课程' : '新建课程'
       this.courseForm={...this.courseForm , ...this.initData}
-      console.log(this.courseForm,33333)
 		}
+    if(this.addData){
+      this.currentDate = this.addData
+    }
 	}
 };
 </script>
