@@ -23,7 +23,7 @@
             </p>
             <div class="operationBox">
               <span class="delete"></span>
-              <span class="edit" @click="editCourse(item1)"></span>
+              <span class="edit" @click="editCourse(item1, item)"></span>
             </div>
           </div>
           <div
@@ -32,7 +32,7 @@
             v-for="(item2, index2) in 3"
             :key="index2+'2'"
           >
-            <p @click="addCourse">
+            <p @click="addCourse(item)">
               <img src="/static/images/file.png" alt>
               <span>添加</span>
             </p>
@@ -94,8 +94,8 @@ export default {
     }
   },
   methods: {
-    addCourse() {
-      this.$router.push({ path: "/AddCourse" });
+    addCourse(data) {
+      this.$router.push({ path: "/AddCourse", query: {addData: data.date}});
     },
     getClass(id) {
       this.$store
@@ -112,12 +112,13 @@ export default {
         });
     },
     //编辑
-    editCourse(data) {
+    editCourse(data, time) {
       data.isEdit = true;
       this.$router.push({
         path: "/AddCourse",
         query: {
-          editData: JSON.stringify(data)
+          editData: JSON.stringify(data),
+          addData: time.date
         }
       });
     }
