@@ -3,27 +3,37 @@
     <div class="table">
       <ul class="header">
         <li v-for="(day, key) in dayList" :key="key">
-          <p>{{day.day}}</p>
+          <p>{{day.day}}日</p>
           <p>{{day.week}}</p>
         </li>
       </ul>
       <div class="body">
         <div class="columns" v-for="(item, index) in courseData" :key="index">
           <div
-            class="rows hasCourse"
+            class="rows"
             v-if="item.list_course_period.length>0"
             v-for="(item1, index1) in item.list_course_period"
             :key="index1"
           >
-            <p>
+            <p class="hasCourse">
               <span>{{item1.subjectName}}</span>
               <span class="course_desc">{{item1.course_desc}}</span>
               <span>{{item1.nickname_teacher}}</span>
-              <s @click="$router.push({path:`/CourseInfo/${item1.id}`})">查看</s>
+              <s @click="$router.push({path:`/CourseInfo/${item1.id}`,query:{currentClass}})">查看</s>
             </p>
             <div class="operationBox">
-              <span class="delete"></span>
+              <span class="delete" @click='deleteCourse(item1.id)' ></span>
               <span class="edit" @click="editCourse(item1, item)"></span>
+            </div>
+            <div
+              class="rows noCouresCh"
+              v-for="(item2, index2) in getLength(item.list_course_period.length)"
+              :key="index2+'2'"
+            >
+              <p @click="addCourse(item)">
+                <img src="/static/images/file.png" alt>
+                <span>添加</span>
+              </p>
             </div>
           </div>
           <div
@@ -51,6 +61,7 @@ import {
   nextYear
 } from "@/utils/mixin";
 export default {
+  props: ["classID", "currentClass"],
   data() {
     return {
       courseData: []
@@ -93,14 +104,33 @@ export default {
       return res;
     }
   },
+  watch: {
+    classID() {
+      this.getClass();
+    }
+  },
   methods: {
+    getLength(u) {
+      if (u >= 3) {
+        return 0;
+      } else {
+        return 3 - u;
+      }
+    },
     addCourse(data) {
-      this.$router.push({ path: "/AddCourse", query: {addData: data.date}});
+      console.log(data);
+      this.$router.push({
+        path: "/AddCourse",
+        query: {
+          addData: data.date,
+          currentClass: this.currentClass
+        }
+      });
     },
     getClass(id) {
       this.$store
         .dispatch("GetAllCourseForClass", {
-          classID: 28,
+          classID: this.classID,
           date_start: "2018-12-01",
           date_end: "2018-12-31"
         })
@@ -121,10 +151,35 @@ export default {
           addData: time.date
         }
       });
+    },
+    //删除课程
+    deleteCourse(id) {
+      this.$confirm("确定删除该课程？", "", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.$store
+            .dispatch("DelCourse", {
+              courseID: id
+            })
+            .then(res => {
+              console.log(res);
+              this.$message.success("成功删除课程");
+              this.getClass(id)
+            });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
     }
   },
   mounted() {
-    this.getClass();
+    // this.getClass();
   },
   created() {}
 };
@@ -161,6 +216,7 @@ export default {
   .body {
     display: flex;
     width: 100%;
+    max-height: 498px;
     .columns {
       width: 120px;
       // flex: 0 0 120px;
@@ -176,6 +232,19 @@ export default {
         &:first-child {
           border-top: 1px solid #e6e6e6;
         }
+        .hasCourse {
+          &:hover {
+            transition: all 1s;
+            background-color: rgba(0, 0, 0, 0.5);
+            s {
+              display: block;
+              color: #fff;
+            }
+          }
+        }
+        .hasCourse:hover + .operationBox {
+          display: block;
+        }
         p {
           margin: 0;
           padding: 35px 0;
@@ -190,6 +259,12 @@ export default {
             height: 20px;
           }
           span {
+            color: #666;
+            font-size: 14px;
+            &:first-of-type {
+              font-size: 18px;
+              color: #333;
+            }
             &.course_desc {
               max-width: 110px;
               display: -webkit-box;
@@ -216,6 +291,7 @@ export default {
             height: 16px;
             bottom: 10px;
             cursor: pointer;
+            // z-index: 1;
             &.delete {
               background-image: url("/static/images/deleteIcon.png");
               right: 40px;
@@ -223,19 +299,6 @@ export default {
             &.edit {
               background-image: url("/static/images/editIcon.png");
               right: 10px;
-            }
-          }
-        }
-        &.hasCourse {
-          &:hover {
-            transition: all 1s;
-            background-color: rgba(0, 0, 0, 0.5);
-            s {
-              display: block;
-              color: #fff;
-            }
-            .operationBox {
-              display: block;
             }
           }
         }
@@ -247,6 +310,19 @@ export default {
             transition: all 1s;
             p {
               display: flex;
+              cursor: pointer;
+            }
+          }
+        }
+        &.noCouresCh {
+          p {
+            display: none;
+          }
+          &:hover {
+            transition: all 1s;
+            p {
+              display: flex;
+              cursor: pointer;
             }
           }
         }

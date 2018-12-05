@@ -6,8 +6,9 @@ import {
   getSessionStorage,
   removeSessionStorage
 } from '@/utils/mixin';
-import {Loading,Message} from 'element-ui'
+import { Loading, Message } from 'element-ui'
 
+let userInfo=JSON.parse(getSessionStorage('userInfo'))
 let loadingInstance;
 let BASE_URL = 'http://123.207.88.200:9000';
 let httpConfig = {
@@ -18,10 +19,10 @@ let httpConfig = {
   // 基础url前缀
   baseURL: BASE_URL,
   headers: {
-          'Content-Type':'application/json',
-          'token':getSessionStorage('token'),
-          'uid':getSessionStorage('uid'),
-          'terminal-Type':'2'
+    'Content-Type': 'application/json',
+    'token': userInfo?userInfo.userAccount.nIMToken:null ,
+    'uid': userInfo?userInfo.userAccount.uid:null ,
+    'terminal-Type': '1000'
   },
   //parameter参数
   params: {},
@@ -37,35 +38,35 @@ let httpConfig = {
  ** 依照原来重写
  *axiosArgument:{url:xxxxx,data:{xxx:xxx}}
  **/
- function postAxios(axiosArgument){
-  loadingInstance = Loading.service({text:'加载中...'});
-  axios.defaults.timeout =  10000;
-  return new Promise(function(resolve,reject){
-      axios.post(BASE_URL+axiosArgument.url,axiosArgument.data ,httpConfig)
-          .then(function (response) {
-              loadingInstance.close();
-              if (response.data.code === 0) { //请求成功
-                return resolve(response.data.data)
-              } else {
-                // if (response.data.code === 2) { //未登录
-                //   //   router.push('/Login')
-                // }
-                Message({
-                  message:response.data.message,
-                  type:'error',
-                });
-                return reject(response.data)
-              }
-          })
-          .catch(function (error) {
-            console.log(error)
-              Message({
-                message:'网络错误,请刷新重试',
-                type:'error',
-              });
-              loadingInstance.close();
-              return reject(error)
+function postAxios(axiosArgument) {
+  loadingInstance = Loading.service({ text: '加载中...' });
+  axios.defaults.timeout = 10000;
+  return new Promise(function (resolve, reject) {
+    axios.post(BASE_URL + axiosArgument.url, axiosArgument.data, httpConfig)
+      .then(function (response) {
+        loadingInstance.close();
+        if (response.data.code === 0) { //请求成功
+          return resolve(response.data.data)
+        } else {
+          // if (response.data.code === 2) { //未登录
+          //   //   router.push('/Login')
+          // }
+          Message({
+            message: response.data.message,
+            type: 'error',
           });
+          return reject(response.data)
+        }
+      })
+      .catch(function (error) {
+        console.log(error)
+        Message({
+          message: '网络错误,请刷新重试',
+          type: 'error',
+        });
+        loadingInstance.close();
+        return reject(error)
+      });
   })
 };
 

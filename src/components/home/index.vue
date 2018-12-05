@@ -24,10 +24,10 @@
       /*
        * 判断 权限数组是否为空
        * */
-      if (getSessionStorage('permissionsList') !== '{}') {
-        this.permissionsList = JSON.parse(getSessionStorage('permissionsList'));
-        this.isSuper = Number(getSessionStorage('isSuper'))
-      }
+      // if (getSessionStorage('permissionsList') !== '{}') {
+      //   this.permissionsList = JSON.parse(getSessionStorage('permissionsList'));
+      //   this.isSuper = Number(getSessionStorage('isSuper'))
+      // }
     }
   }
 </script>

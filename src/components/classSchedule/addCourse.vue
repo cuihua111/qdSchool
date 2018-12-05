@@ -1,7 +1,7 @@
 <template>
   <div class="courseInfo">
     <div class="container">
-			<bread-header :titleInfo="titleInfo"></bread-header>
+      <bread-header :titleInfo="titleInfo"></bread-header>
       <div class="content">
         <div class="aside">
           <div
@@ -9,7 +9,7 @@
           >星期{{getDateW(currentDate.date)}}({{$moment(currentDate.date).format('HH')>12?'下午':'上午'}})</div>
           <div class="font16 one">{{$moment(currentDate.date).format('YYYY年MM月DD日')}}</div>
           <div class="font16 two">所在班级</div>
-          <div class="font20">sadasd</div>
+          <div class="font20">{{currentClass}}</div>
         </div>
         <div class="main">
           <div class="formBox">
@@ -92,11 +92,11 @@
               <el-button @click="cancel">取消</el-button>
               <el-button class="confirm" type="primary" @click="save">保存</el-button>
               <!-- <el-button @click="isEdit=!isEdit">编辑</el-button>
-              <el-button @click="deleteCourse">删除</el-button> -->
+              <el-button @click="deleteCourse">删除</el-button>-->
             </div>
             <!-- <div v-show="!isRelease" class="oneBtn">
               <span>发布</span>
-            </div> -->
+            </div>-->
           </div>
         </div>
       </div>
@@ -108,9 +108,9 @@ import { getSessionStorage } from "@/utils/mixin";
 export default {
   data() {
     return {
-			titleInfo: {
-				centerTitle: '新建课程',
-			},
+      titleInfo: {
+        centerTitle: "新建课程"
+      },
       courseDetails: {},
       isRelease: true, //是否发布
       isEdit: false, // 是否编辑
@@ -147,53 +147,56 @@ export default {
           label: "19:30-22:00"
         }
       ],
-			timeChoose: "",//上课时间选择
-			courseForm: {
-				startTime: '',
-				endTime: '',
-				subjectID: '',
-				teacherID: [],
-				classIDList: [],
-				course_desc: '',
-				accessoryList: [],
-				kejianList: [0],
-				is_topublish: 0
+      timeChoose: "", //上课时间选择
+      courseForm: {
+        startTime: "",
+        endTime: "",
+        subjectID: "",
+        teacherID: [],
+        classIDList: [],
+        course_desc: "",
+        accessoryList: [],
+        kejianList: [0],
+        is_topublish: 0
       },
-      initData:null,
+      initData: null,
       currentDate: null
     };
-	},
-	components: {
-		breadHeader: () => import('@/components/breadHeader/breadHeader.vue'),
-		// curriculum: () => import('@/components/curriculum')
-	},
+  },
+  components: {
+    breadHeader: () => import("@/components/breadHeader/breadHeader.vue")
+    // curriculum: () => import('@/components/curriculum')
+  },
   methods: {
-    cancel(){
-      this.$router.go(-1)
+    cancel() {
+      this.$router.go(-1);
     },
-		save(){
-      console.log(this.timeChoose)
-      this.courseForm.startTime=this.timeChoose.split('-')[0]
-      this.courseForm.startTime=this.currentDate.split(' ')[0] + ' ' + this.courseForm.startTime + ':00'
-      this.courseForm.endTime=this.timeChoose.split('-')[1]
-      this.courseForm.endTime=this.currentDate.split(' ')[0] + ' ' + this.courseForm.endTime + ':00'
-
-			this.$store
-        .dispatch("CreateCourse", this.courseForm)
-        .then(res => {
-					console.log(res);
-					this.$router.go(-1)
-        });
-		},
+    save() {
+      console.log(this.timeChoose);
+      this.courseForm.startTime = this.timeChoose.split("-")[0];
+      this.courseForm.startTime =
+        this.currentDate.split(" ")[0] +
+        " " +
+        this.courseForm.startTime +
+        ":00";
+      this.courseForm.endTime = this.timeChoose.split("-")[1];
+      this.courseForm.endTime =
+        this.currentDate.split(" ")[0] + " " + this.courseForm.endTime + ":00";
+      this.$store.dispatch("CreateCourse", this.courseForm).then(res => {
+        this.$router.go(-1);
+      });
+    },
     getCourseDetails() {
       this.$store
         .dispatch("GetCourseDetails", { courseID: this.$route.params.id })
         .then(res => {
           console.log(res);
           this.courseDetails = res;
-					this.isRelease = res.is_published == 0 ? false : true;
-					this.titleInfo.rightTitle.isRelease = res.is_published == 0 ? false : true;
-					this.titleInfo.rightTitle.statusImgUrl = res.is_published == 0
+          this.isRelease = res.is_published == 0 ? false : true;
+          this.titleInfo.rightTitle.isRelease =
+            res.is_published == 0 ? false : true;
+          this.titleInfo.rightTitle.statusImgUrl =
+            res.is_published == 0
               ? "/static/images/weifabu.png"
               : "/static/images/fabuSuccess.png";
           this.statusImgUrl =
@@ -242,11 +245,11 @@ export default {
     //上传图片成功回调
     uploadSuccess(res, file, lll) {
       console.log(res, file, lll, this.tokenOption.bucketUrl);
-      this.uploadArr.push(this.tokenOption.bucketUrl + '/' + res.key);
+      this.uploadArr.push(this.tokenOption.bucketUrl + "/" + res.key);
       this.courseForm.accessoryList.push({
-        type_material: file.raw.type == 'image/png' ? 0: 1,
-        accessoryURL: this.tokenOption.bucketUrl + '/' + res.key
-      })
+        type_material: file.raw.type == "image/png" ? 0 : 1,
+        accessoryURL: this.tokenOption.bucketUrl + "/" + res.key
+      });
       console.log(this.uploadArr.length);
     },
     //获取七牛云token
@@ -271,22 +274,21 @@ export default {
     this.getAllSubClassList();
     // }
     this.getUploadToken();
-	},
-	created(){
-    console.log(this.$route.query.editData, 'sssss')
-		this.initData = this.$route.query.editData || null
-    this.addData = this.$route.query.addData || null
-		if(this.initData){
-      this.initData = JSON.parse(this.initData)
-      console.log(this.initData, 'sssss')
-			this.isEdit = this.initData.isEdit
-      this.titleInfo.centerTitle = this.isEdit ? '编辑课程' : '新建课程'
-      this.courseForm={...this.courseForm , ...this.initData}
-		}
-    if(this.addData){
-      this.currentDate = this.addData
+  },
+  created() {
+    this.initData = this.$route.query.editData || null;
+    this.addData = this.$route.query.addData || null;
+    this.currentClass = this.$route.query.currentClass || null;
+    if (this.initData) {
+      this.initData = JSON.parse(this.initData);
+      this.isEdit = this.initData.isEdit;
+      this.titleInfo.centerTitle = this.isEdit ? "编辑课程" : "新建课程";
+      this.courseForm = { ...this.courseForm, ...this.initData };
     }
-	}
+    if (this.addData) {
+      this.currentDate = this.addData;
+    }
+  }
 };
 </script>
 <style lang="scss">
@@ -302,6 +304,7 @@ export default {
       width: 186px;
       border-right: 1px solid #e6e6e6;
       box-sizing: border-box;
+      text-align: center;
       .font20 {
         font-size: 20px;
         color: #333;
@@ -327,28 +330,28 @@ export default {
         .kejianList {
           display: flex;
           flex-wrap: wrap;
-					.upload{
-						display: flex;
-						.el-upload-list--picture-card {
-							display: flex;
-							.el-upload-list__item {
-								width: 125px;
-								height: 172px;
-							}
-						}
-						.el-upload--picture-card {
-							width: 125px;
-							height: 172px;
-							line-height: 35px;
-							border: 1px solid #e6e6e6;
-						}
-						img {
-							width: 125px;
-							height: 172px;
-							border-radius: 4px;
-							margin-right: 10px;
-						}
-					}
+          .upload {
+            display: flex;
+            .el-upload-list--picture-card {
+              display: flex;
+              .el-upload-list__item {
+                width: 125px;
+                height: 172px;
+              }
+            }
+            .el-upload--picture-card {
+              width: 125px;
+              height: 172px;
+              line-height: 35px;
+              border: 1px solid #e6e6e6;
+            }
+            img {
+              width: 125px;
+              height: 172px;
+              border-radius: 4px;
+              margin-right: 10px;
+            }
+          }
         }
       }
       .operationBtnList {
@@ -368,9 +371,9 @@ export default {
             border-radius: 4px;
             line-height: 30px;
             padding: 0;
-						&.confirm{
-							background: #40b9e6;
-						}
+            &.confirm {
+              background: #40b9e6;
+            }
             &:nth-of-type(2) {
               margin: 0 15px;
             }

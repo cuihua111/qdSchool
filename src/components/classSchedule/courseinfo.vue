@@ -18,18 +18,18 @@
           >星期{{getDateW(courseDetails.startTime)}}({{$moment(courseDetails.startTime).format('HH')>12?'下午':'上午'}})</div>
           <div class="font16 one">{{$moment(courseDetails.startTime).format('YYYY年MM月DD日')}}</div>
           <div class="font16 two">所在班级</div>
-          <div class="font20">sadasd</div>
+          <div class="font20">{{$route.query.currentClass}}</div>
         </div>
         <div class="main">
           <div class="formBox">
             <el-form label-width="90px" :model="courseDetails">
               <el-form-item label="上课科目：">
                 <div v-if="!isEdit">{{courseDetails.subjectName}}</div>
-                <el-radio-group v-else v-model="radioValue">
+                <el-radio-group v-else v-model="courseDetails.subjectID">
                   <el-radio
                     v-for="item in courseList"
                     :key="item.name"
-                    :label="item.name"
+                    :label="item.id"
                   >{{item.name}}</el-radio>
                 </el-radio-group>
               </el-form-item>
@@ -37,12 +37,12 @@
                 <div
                   v-if="!isEdit"
                 >{{$moment(courseDetails.startTime).format('HH:mm')}} - {{$moment(courseDetails.endTime).format('HH:mm')}}</div>
-                <el-select v-else v-model="value" placeholder="请选择">
+                <el-select v-else v-model="chooseTime" placeholder="请选择">
                   <el-option
                     v-for="item in options"
                     :key="item.value"
                     :label="item.label"
-                    :value="item.value"
+                    :value="item.label"
                   ></el-option>
                 </el-select>
               </el-form-item>
@@ -53,7 +53,7 @@
                     <b v-if="index!=courseDetails.teacherNameList.length-1">、</b>
                   </span>
                 </div>
-                <el-select v-else multiple v-model="chooseTeacher" placeholder="请选择">
+                <el-select v-else multiple v-model="courseDetails.teacherIDList" placeholder="请选择">
                   <el-option
                     v-for="item in teacherList"
                     :key="item.uid"
@@ -69,7 +69,7 @@
                     <b v-if="index!=courseDetails.classNameList.length-1">、</b>
                   </span>
                 </div>
-                <el-select v-else multiple v-model="chooseClass" placeholder="请选择">
+                <el-select v-else multiple v-model="courseDetails.classIDList" placeholder="请选择">
                   <el-option
                     v-for="item in classList"
                     :key="item.classID"
@@ -80,13 +80,12 @@
               </el-form-item>
               <el-form-item label="上课内容：">
                 <div v-if="!isEdit">{{courseDetails.course_desc}}</div>
-                <el-input :value="classContent" v-else type="textarea"></el-input>
+                <el-input :value="courseDetails.course_desc" v-else type="textarea"></el-input>
               </el-form-item>
               <el-form-item>
                 <div class="kejianList">
                   <div>
                     <el-upload
-                    
                       class="upload"
                       action="http://upload-z2.qiniup.com"
                       :on-success="uploadSuccess"
@@ -113,44 +112,79 @@
               </el-form-item>
             </el-form>
           </div>
-          <div class="operationBtnList" :style="isRelease==false?styleObj:''">
+          <div v-if="!isEdit" class="operationBtnList" :style="isRelease==false?styleObj:''">
             <div class="threeBtn">
               <el-button>复制</el-button>
               <el-button @click="isEdit=!isEdit">编辑</el-button>
               <el-button @click="deleteCourse">删除</el-button>
             </div>
             <div v-show="!isRelease" class="oneBtn">
-              <span>发布</span>
+              <el-button type="primary">发布</el-button>
             </div>
+          </div>
+          <div style="text-align:right; margin-bottom: 50px;" v-else>
+            <el-button @click="isEdit=!isEdit">取消</el-button>
+            <el-button @click="editCpurse" type="primary">保存</el-button>
           </div>
         </div>
       </div>
     </div>
+    <el-dialog title="选择复制至日期" :visible.sync="dialogVisible" width="30%">
+      <Datepicker class="datePicker_M" :language="zh" :inline="true"></Datepicker>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
+
 <script>
 import { getSessionStorage } from "@/utils/mixin";
+import Datepicker from "vuejs-datepicker";
+import { zh } from "vuejs-datepicker/dist/locale";
 export default {
+  components: {
+    Datepicker
+  },
   data() {
     return {
+      zh,
+      dialogVisible: false,
       courseDetails: {},
+      chooseTime: "", //时间
       isRelease: true, //是否发布
       isEdit: false, // 是否编辑
-      chooseTeacher: [], //选择的老师
       uploadArr: [], //添加的图片
-      chooseClass: [], //选择的班级
       teacherList: [], //所有的老的列表
       classList: [], //班级列表
-      classContent: "", //上课内容
       statusImgUrl: "", //状态图片
       tokenOption: null, //七牛云配置
       courseList: [
-        { name: "素描静物", id: 1 },
-        { name: "素描头像", id: 2 },
-        { name: "色彩静物", id: 3 },
-        { name: "色彩头像", id: 4 },
-        { name: "人物速写", id: 5 },
-        { name: "风景速写", id: 6 }
+        {
+          name: "素描静物",
+          id: 1
+        },
+        {
+          name: "素描头像",
+          id: 2
+        },
+        {
+          name: "色彩静物",
+          id: 3
+        },
+        {
+          name: "色彩头像",
+          id: 4
+        },
+        {
+          name: "人物速写",
+          id: 5
+        },
+        {
+          name: "风景速写",
+          id: 6
+        }
       ],
       radioValue: "素描静物",
       styleObj: {
@@ -158,37 +192,49 @@ export default {
       },
       options: [
         {
-          value: "选项1",
-          label: "黄金糕"
+          label: "8:30 - 12:00"
         },
         {
-          value: "选项2",
-          label: "双皮奶"
+          label: "14:30 - 18:00"
         },
         {
-          value: "选项3",
-          label: "蚵仔煎"
-        },
-        {
-          value: "选项4",
-          label: "龙须面"
-        },
-        {
-          value: "选项5",
-          label: "北京烤鸭"
+          label: "19:30 - 22:00"
         }
       ],
-      value: ""
+      //修改提交
+      submitForm: {
+        startTime: "",
+        endTime: "",
+        subjectID: "",
+        teacherID: [],
+        classIDList: [],
+        course_desc: "",
+        accessoryList: [],
+        kejianList: [0],
+        is_topublish: 0,
+        courseID: ""
+      },
+      currentDate: "" //格式化时间
     };
   },
   methods: {
+    //获取课程详情
     getCourseDetails() {
       this.$store
-        .dispatch("GetCourseDetails", { courseID: this.$route.params.id })
+        .dispatch("GetCourseDetails", {
+          courseID: this.$route.params.id
+        })
         .then(res => {
-          console.log(res);
+          console.log(res, "sssss");
           this.courseDetails = res;
+          this.chooseTime =
+            this.$moment(res.startTime).format("HH:mm") +
+            " - " +
+            this.$moment(res.endTime).format("HH:mm");
           this.isRelease = res.is_published == 0 ? false : true;
+          this.currentDate = this.$moment(this.courseDetails.startTime).format(
+            "YYYY-MM-DD"
+          );
           this.statusImgUrl =
             res.is_published == 0
               ? "/static/images/weifabu.png"
@@ -200,6 +246,36 @@ export default {
       let week = ["一", "二", "三", "四", "五", "六", "日"];
       let dateStr = this.$moment(time).format("E");
       return week[dateStr - 1];
+    },
+    //编辑课程
+    editCpurse() {
+      let tempObj = {
+        startTime: "",
+        endTime: "",
+        subjectID: this.courseDetails.subjectID,
+        teacherID: this.courseDetails.teacherIDList,
+        classIDList: this.courseDetails.classIDList,
+        course_desc: this.courseDetails.course_desc,
+        kejianList: [0],
+        is_topublish: 0,
+        courseID: this.$route.params.id
+      };
+      tempObj.startTime =
+        this.currentDate.split(" ")[0] +
+        " " +
+        this.chooseTime.split(" - ")[0] +
+        ":00";
+      tempObj.endTime =
+        this.currentDate.split(" ")[0] +
+        " " +
+        this.chooseTime.split(" - ")[1] +
+        ":00";
+      this.submitForm = { ...this.submitForm, ...tempObj };
+
+      this.$store.dispatch("ModifyCourse", this.submitForm).then(res => {
+        this.$router.go(-1);
+        this.$message.success("编辑课程成功");
+      });
     },
     //获取老师列表
     getAllTeachersOfSchool() {
@@ -226,16 +302,37 @@ export default {
     },
     //删除课程
     deleteCourse() {
-      this.$store
-        .dispatch("DelCourse", { courseID: this.courseDetails.courseID })
-        .then(res => {
-          console.log(res);
+      this.$confirm("确定删除该课程？", "", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.$store
+            .dispatch("DelCourse", {
+              courseID: this.courseDetails.courseID
+            })
+            .then(res => {
+              console.log(res);
+              this.$message.success("成功删除课程");
+              this.$router.go(-1);
+            });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
         });
     },
     //上传图片成功回调
     uploadSuccess(res, file, lll) {
       console.log(res, file, lll);
-      this.uploadArr.push(this.tokenOption.bucketUrl + res.key);
+      this.uploadArr.push(this.tokenOption.bucketUrl + "/" + res.key);
+      this.submitForm.accessoryList.push({
+        type_material: file.raw.type == "image/png" ? 0 : 1,
+        accessoryURL: this.tokenOption.bucketUrl + "/" + res.key
+      });
       console.log(this.uploadArr.length);
     },
     //获取七牛云token
@@ -255,147 +352,164 @@ export default {
     }
   },
   mounted() {
-    this.getCourseDetails();
     // if (this.isEdit) {
-    this.getAllTeachersOfSchool();
+      this.getAllTeachersOfSchool();
     this.getAllSubClassList();
     // }
     this.getUploadToken();
+  },
+  created(){
+    this.getCourseDetails();
   }
 };
 </script>
+
 <style lang="scss">
-.container {
-  width: 1200px;
-  margin: 20px auto 0;
-  border: 1px solid #ddd;
-  box-shadow: 0px 0px 20px -5px #53a8ff;
-  .title {
-    height: 60px;
-    font-size: 20px;
-    line-height: 60px;
-    border-bottom: 1px solid #e5e5e5;
-    color: #333;
-    text-align: center;
-    position: relative;
-    .back,
-    .status {
-      position: absolute;
-      color: #4dc2fd;
-      font-size: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      img {
-        width: 10px;
-        height: 18px;
-        margin-right: 10px;
-        vertical-align: sub;
-      }
-    }
-    .back {
-      left: 30px;
-    }
-    .status {
+.courseInfo {
+  .container {
+    width: 1200px;
+    margin: 20px auto 0;
+    border: 1px solid #ddd;
+    box-shadow: 0px 0px 20px -5px #53a8ff;
+    .title {
+      height: 60px;
+      font-size: 20px;
+      line-height: 60px;
+      border-bottom: 1px solid #e5e5e5;
       color: #333;
-      right: 30px;
-      img {
-        width: 20px;
-        height: 20px;
-        margin-left: 10px;
+      text-align: center;
+      position: relative;
+      .back,
+      .status {
+        position: absolute;
+        color: #4dc2fd;
+        font-size: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        img {
+          width: 10px;
+          height: 18px;
+          margin-right: 10px;
+          vertical-align: sub;
+        }
       }
-    }
-  }
-  .content {
-    display: flex;
-    height: calc(100% - 61px);
-    .aside {
-      width: 186px;
-      border-right: 1px solid #e6e6e6;
-      box-sizing: border-box;
-      padding-left: 20px;
-      .font20 {
-        font-size: 20px;
+      .back {
+        left: 30px;
+      }
+      .status {
         color: #333;
-        &:first-of-type {
-          margin-top: 55px;
-        }
-      }
-      .font16 {
-        color: #666;
-        &.one {
-          margin-top: 15px;
-        }
-        &.two {
-          margin: 35px 0 10px 0;
+        right: 30px;
+        img {
+          width: 20px;
+          height: 20px;
+          margin-left: 10px;
         }
       }
     }
-    .main {
-      width: calc(100% - 186px);
-      background-color: #fff;
-      padding: 55px 65px 0;
-      .formBox {
-        .kejianList {
-          display: flex;
-          flex-wrap: wrap;
-          .el-upload-list--picture-card {
+    .content {
+      display: flex;
+      height: calc(100% - 61px);
+      .aside {
+        width: 186px;
+        border-right: 1px solid #e6e6e6;
+        box-sizing: border-box;
+        padding-left: 20px;
+        .font20 {
+          font-size: 20px;
+          color: #333;
+          &:first-of-type {
+            margin-top: 55px;
+          }
+        }
+        .font16 {
+          color: #666;
+          &.one {
+            margin-top: 15px;
+          }
+          &.two {
+            margin: 35px 0 10px 0;
+          }
+        }
+      }
+      .main {
+        width: calc(100% - 186px);
+        background-color: #fff;
+        padding: 55px 65px 0;
+        .formBox {
+          .kejianList {
             display: flex;
-            .el-upload-list__item {
+            flex-wrap: wrap;
+            .el-upload-list--picture-card {
+              display: flex;
+              .el-upload-list__item {
+                width: 125px;
+                height: 172px;
+              }
+            }
+            .el-upload--picture-card {
               width: 125px;
               height: 172px;
+              line-height: 35px;
+              border: 1px solid #e6e6e6;
+            }
+            img {
+              width: 125px;
+              height: 172px;
+              border-radius: 4px;
+              margin-right: 10px;
             }
           }
-          .el-upload--picture-card {
-            width: 125px;
-            height: 172px;
-            line-height: 35px;
-            border: 1px solid #e6e6e6;
+        }
+        .operationBtnList {
+          display: flex;
+          justify-content: flex-end;
+          padding: 10px 20px;
+          margin-bottom: 50px;
+          background-color: #ccc;
+          .threeBtn {
+            .el-button {
+              display: inline-block;
+              width: 88px;
+              height: 30px;
+              border: 1px solid #ccc;
+              background-color: #fff;
+              font-size: 14px;
+              border-radius: 4px;
+              line-height: 30px;
+              padding: 0;
+              &:nth-of-type(2) {
+                margin: 0 15px;
+              }
+              &:nth-of-type(3) {
+                color: #f84c4c;
+              }
+            }
           }
-          img {
-            width: 125px;
-            height: 172px;
-            border-radius: 4px;
-            margin-right: 10px;
+          .oneBtn {
+            .el-button {
+              width: 88px;
+              height: 32px;
+              text-align: center;
+              font-size: 14px;
+              border-radius: 4px;
+              color: #fff;
+              line-height: 30px;
+              padding: 0;
+            }
           }
         }
       }
-      .operationBtnList {
-        display: flex;
-        justify-content: flex-end;
-        padding: 10px 20px;
-        margin-bottom: 50px;
-        background-color: #ccc;
-        .threeBtn {
-          .el-button {
-            display: inline-block;
-            width: 88px;
-            height: 30px;
-            border: 1px solid #ccc;
-            background-color: #fff;
-            font-size: 14px;
-            border-radius: 4px;
-            line-height: 30px;
-            padding: 0;
-            &:nth-of-type(2) {
-              margin: 0 15px;
-            }
-            &:nth-of-type(3) {
-              color: #f84c4c;
-            }
-          }
-        }
-        .oneBtn {
-          width: 88px;
-          height: 32px;
-          text-align: center;
-          font-size: 14px;
-          border-radius: 4px;
-          background-color: #40b9e6;
-          color: #fff;
-          line-height: 30px;
-        }
+    }
+    .datePicker_M {
+      background-color: red;
+      .vdp-datepicker__calendar {
+        border: 0 !important;
       }
+    }
+    .el-dialog__header {
+      background-color: #40b9e6 !important;
+      color: #fff;
     }
   }
 }
