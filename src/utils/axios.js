@@ -42,8 +42,10 @@ class Http {
         baseURL: this.Domain,
         headers: {
           'Content-Type':'application/json',
-          'token':getSessionStorage('token'),
-          'uid':getSessionStorage('uid'),
+          'token': JSON.parse(getSessionStorage('userInfo')).userAccount.token,
+          'uid': JSON.parse(getSessionStorage('userInfo')).userAccount.uid,
+          // 'token':getSessionStorage('token'),
+          // 'uid':getSessionStorage('uid'),
           'terminal-Type':'2'
         },
         data: options.param

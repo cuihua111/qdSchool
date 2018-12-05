@@ -179,40 +179,7 @@ export default {
       this.courseForm.endTime=this.currentDate.split(' ')[0] + ' ' + this.courseForm.endTime + ':00'
 
 			this.$store
-        // .dispatch("CreateCourse", this.courseForm)
-        .dispatch("CreateCourse", {
-  "startTime": "2018-10-11 15:00:00",
-  "endTime": "2018-10-11 17:00:00",
-  "subjectID": 3,
-  "teacherID": [341,339,10],
-  "classIDList": [
-   28,
-    29
-  ],
-  "course_desc": "课程介绍",
-  "accessoryList": [
-    {
-      "type_material": 0,
-      "accessoryURL": "http://pgzpa5qd6.bkt.clouddn.com/20181112143744011.jpg"
-    },
-    {
-      "type_material": 0,
-      "accessoryURL": "http://pgzpa5qd6.bkt.clouddn.com/20181112143656919.jpg"
-    },
-    {
-      "type_material": 1,
-      "accessoryURL": "http://pgzpa5qd6.bkt.clouddn.com/20181112143656919.jpg"
-    },
-    {
-      "type_material": 1,
-      "accessoryURL": "http://pgzpa5qd6.bkt.clouddn.com/20181112143656919.jpg"
-    }
-  ],
-  "kejianList": [
- 0
-  ],
-  "is_topublish": 0
-})
+        .dispatch("CreateCourse", this.courseForm)
         .then(res => {
 					console.log(res);
 					this.$router.go(-1)
