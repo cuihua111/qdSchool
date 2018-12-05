@@ -2,7 +2,7 @@
   <div class="courseInfo">
     <div class="container">
       <div class="title">
-        <div class="back">
+        <div class="back" @click="backToCourse">
           <img src="/static/images/back.png" alt>
           <span>返回</span>
         </div>课程详情
@@ -80,12 +80,13 @@
               </el-form-item>
               <el-form-item label="上课内容：">
                 <div v-if="!isEdit">{{courseDetails.course_desc}}</div>
-                <el-input :value="courseDetails.course_desc" v-else type="textarea"></el-input>
+                <el-input v-model="courseDetails.course_desc" v-else type="textarea"></el-input>
               </el-form-item>
               <el-form-item>
                 <div class="kejianList">
                   <div>
                     <el-upload
+                      v-if="isEdit"
                       class="upload"
                       action="http://upload-z2.qiniup.com"
                       :on-success="uploadSuccess"
@@ -218,6 +219,9 @@ export default {
     };
   },
   methods: {
+    backToCourse(){
+      this.$router.go(-1)
+    },
     //获取课程详情
     getCourseDetails() {
       this.$store
@@ -360,6 +364,7 @@ export default {
   },
   created(){
     this.getCourseDetails();
+    this.isEdit = this.$route.query.isEdit || null
   }
 };
 </script>
@@ -440,6 +445,9 @@ export default {
           .kejianList {
             display: flex;
             flex-wrap: wrap;
+            .upload{
+              margin-right: 10px;
+            }
             .el-upload-list--picture-card {
               display: flex;
               .el-upload-list__item {

@@ -74,13 +74,13 @@
                       <!-- <img :src="uploadArr[0]" alt=""> -->
                     </el-upload>
                   </div>
-                  <div v-for="(item,index) in courseForm.kejianList" :key="'kj'+index">
+                  <div v-if="courseForm.kejianList.length > 0" v-for="(item,index) in courseForm.kejianList" :key="'kj'+index">
                     <img :src="item.url_cover" alt>
                   </div>
-                  <div v-for="(item,index) in courseForm.course_picList" :key="'pic'+index">
+                  <div v-if="courseForm.course_picList.length > 0" v-for="(item,index) in courseForm.course_picList" :key="'pic'+index">
                     <img :src="item" alt>
                   </div>
-                  <div v-for="(item,index) in courseForm.course_videoList" :key="'video'+index">
+                  <div v-if="courseForm.course_videoList.length > 0" v-for="(item,index) in courseForm.course_videoList" :key="'video'+index">
                     <img :src="item" alt>
                   </div>
                 </div>
@@ -276,15 +276,8 @@ export default {
     this.getUploadToken();
   },
   created() {
-    this.initData = this.$route.query.editData || null;
     this.addData = this.$route.query.addData || null;
     this.currentClass = this.$route.query.currentClass || null;
-    if (this.initData) {
-      this.initData = JSON.parse(this.initData);
-      this.isEdit = this.initData.isEdit;
-      this.titleInfo.centerTitle = this.isEdit ? "编辑课程" : "新建课程";
-      this.courseForm = { ...this.courseForm, ...this.initData };
-    }
     if (this.addData) {
       this.currentDate = this.addData;
     }

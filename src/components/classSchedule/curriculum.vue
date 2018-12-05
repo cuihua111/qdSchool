@@ -12,23 +12,22 @@
           <div
             class="rows"
             v-if="item.list_course_period.length>0"
-            v-for="(item1, index1) in item.list_course_period"
+            v-for="(item1, index1) in 3"
             :key="index1"
           >
-            <p class="hasCourse">
-              <span>{{item1.subjectName}}</span>
-              <span class="course_desc">{{item1.course_desc}}</span>
-              <span>{{item1.nickname_teacher}}</span>
-              <s @click="$router.push({path:`/CourseInfo/${item1.id}`,query:{currentClass}})">查看</s>
-            </p>
-            <div class="operationBox">
-              <span class="delete" @click='deleteCourse(item1.id)' ></span>
-              <span class="edit" @click="editCourse(item1, item)"></span>
+            <div class="hasCourse" v-if="item.list_course_period[index1]">
+              <span>{{item.list_course_period[index1].subjectName}}</span>
+              <span class="course_desc">{{item.list_course_period[index1].course_desc}}</span>
+              <span>{{item.list_course_period[index1].nickname_teacher}}</span>
+              <s @click="$router.push({path:`/CourseInfo/${item.list_course_period[index1].id}`,query:{currentClass}})">查看</s>
+              <div class="operationBox">
+                <span class="delete" @click='deleteCourse(item.list_course_period[index1].id)' ></span>
+                <span class="edit" @click="editCourse(item.list_course_period[index1], item)"></span>
+              </div>
             </div>
             <div
+              v-if="!item.list_course_period[index1]"
               class="rows noCouresCh"
-              v-for="(item2, index2) in getLength(item.list_course_period.length)"
-              :key="index2+'2'"
             >
               <p @click="addCourse(item)">
                 <img src="/static/images/file.png" alt>
@@ -145,10 +144,10 @@ export default {
     editCourse(data, time) {
       data.isEdit = true;
       this.$router.push({
-        path: "/AddCourse",
+        path: `/CourseInfo/${data.id}`,
         query: {
-          editData: JSON.stringify(data),
-          addData: time.date
+          currentClass: this.currentClass,
+          isEdit: data.isEdit
         }
       });
     },
@@ -233,19 +232,6 @@ export default {
           border-top: 1px solid #e6e6e6;
         }
         .hasCourse {
-          &:hover {
-            transition: all 1s;
-            background-color: rgba(0, 0, 0, 0.5);
-            s {
-              display: block;
-              color: #fff;
-            }
-          }
-        }
-        .hasCourse:hover + .operationBox {
-          display: block;
-        }
-        p {
           margin: 0;
           padding: 35px 0;
           height: 100%;
@@ -282,32 +268,55 @@ export default {
             font-size: 18px;
             cursor: pointer;
           }
-        }
-        .operationBox {
-          display: none;
-          span {
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            bottom: 10px;
-            cursor: pointer;
-            // z-index: 1;
-            &.delete {
-              background-image: url("/static/images/deleteIcon.png");
-              right: 40px;
-            }
-            &.edit {
-              background-image: url("/static/images/editIcon.png");
-              right: 10px;
-            }
-          }
-        }
-        &.noCoures {
-          p {
+          .operationBox {
             display: none;
+            span {
+              position: absolute;
+              width: 16px;
+              height: 16px;
+              bottom: 10px;
+              cursor: pointer;
+              // z-index: 1;
+              &.delete {
+                background-image: url("/static/images/deleteIcon.png");
+                right: 40px;
+              }
+              &.edit {
+                background-image: url("/static/images/editIcon.png");
+                right: 10px;
+              }
+            }
           }
           &:hover {
             transition: all 1s;
+            background-color: rgba(0, 0, 0, 0.5);
+            s {
+              display: block;
+              color: #fff;
+            }
+            .operationBox{
+              display: block;
+              color: #fff;
+            }
+          }
+        }
+        // .hasCourse:hover + .operationBox {
+        //   display: block;
+        // }
+        &.noCoures {
+          p {
+            margin: 0;
+            padding: 35px 0;
+            height: 100%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+            display: none;
+          }
+          &:hover {
+            // transition: all 1s;
             p {
               display: flex;
               cursor: pointer;
@@ -316,6 +325,14 @@ export default {
         }
         &.noCouresCh {
           p {
+            margin: 0;
+            padding: 35px 0;
+            height: 100%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
             display: none;
           }
           &:hover {
