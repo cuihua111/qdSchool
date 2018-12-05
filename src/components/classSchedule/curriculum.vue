@@ -52,6 +52,7 @@
   </div>
 </template>
 <script>
+import moment from "moment";
 import {
   getDayCountOfYear,
   getFirstDayOfMonth,
@@ -60,7 +61,7 @@ import {
   nextYear
 } from "@/utils/mixin";
 export default {
-  props: ["classID", "currentClass"],
+  props: ["classID", "currentClass", 'date'],
   data() {
     return {
       courseData: []
@@ -77,7 +78,7 @@ export default {
       return new Date().getMonth();
     },
     week() {
-      return getFirstDayOfMonth(new Date());
+      return getFirstDayOfMonth(new Date(this.date.year, this.date.month, ''));
     },
     WEEKS() {
       return [
@@ -92,7 +93,7 @@ export default {
     },
     dayList() {
       let res = [];
-      for (let i = 0; i < getDayCountOfMonth(this.year, this.month); i++) {
+      for (let i = 0; i < getDayCountOfMonth(this.date.year, this.date.month); i++) {
         res.push({
           day: i + 1,
           week: this.WEEKS[
@@ -100,11 +101,18 @@ export default {
           ]
         });
       }
+      console.log(res,this.date.year, this.date.month, this.week,  'ssss')
       return res;
     }
   },
   watch: {
     classID() {
+      this.getClass();
+    },
+    'date.year'(){
+      this.getClass();
+    },
+    'date.month'(){
       this.getClass();
     }
   },
@@ -130,14 +138,14 @@ export default {
       this.$store
         .dispatch("GetAllCourseForClass", {
           classID: this.classID,
-          date_start: "2018-12-01",
-          date_end: "2018-12-31"
+          date_start: `${this.date.year}-${this.date.month}-01`,
+          date_end: `${this.date.year}-${this.date.month}-31`
         })
         .then(res => {
-          // this.courseData = res.courseList;
-          this.courseData = res.courseList.filter(item => {
-            return new Date(item.date).getMonth() == new Date().getMonth();
-          });
+          this.courseData = res.courseList;
+          // this.courseData = res.courseList.filter(item => {
+          //   return new Date(item.date).getMonth() == new Date().getMonth();
+          // });
         });
     },
     //编辑

@@ -24,8 +24,8 @@
           <el-container>
             <el-aside class="aside">
               <div class="classDate">
-                <span>10月</span>
-                <span>第7周</span>
+                <span>{{nowDate.year}}年</span>
+                <span><i @click="prevDate" class="el-icon-arrow-left changeLeft"></i>{{nowDate.month}}月<i @click="nextDate" class="el-icon-arrow-right changeRight"></i></span>
               </div>
               <div class="classTime">
                 <div>
@@ -46,7 +46,7 @@
               </div>
             </el-aside>
             <el-main>
-              <curriculum :currentClass="currentClass" :classID="classID"></curriculum>
+              <curriculum :currentClass="currentClass" :classID="classID" :date="nowDate"></curriculum>
             </el-main>
           </el-container>
         </div>
@@ -55,7 +55,7 @@
   </div>
 </template>
 <script>
-import { getSessionStorage } from "@/utils/mixin";
+import { getSessionStorage, prevMonth, nextMonth } from "@/utils/mixin";
 import moment from "moment";
 
 export default {
@@ -69,6 +69,11 @@ export default {
       liCheckedIndex: 0, //侧面班级高亮索引
       classID:'',//班级id
       currentClass:'',//当前班级
+      date: {},
+      nowDate: {
+        year: '',
+        month: ''
+      }
     };
   },
   components: {
@@ -76,6 +81,17 @@ export default {
 		curriculum: () => import('@/components/classSchedule/curriculum')
 	},
   methods: {
+    prevDate(){
+      let date = new Date(this.nowDate.year, this.nowDate.month, '')
+      this.nowDate.year = prevMonth(date).getFullYear()
+      this.nowDate.month = prevMonth(date).getMonth() + 1
+      
+    },
+    nextDate(){
+      let date = new Date(this.nowDate.year, this.nowDate.month, '')
+      this.nowDate.year = nextMonth(date).getFullYear()
+      this.nowDate.month = nextMonth(date).getMonth() + 1
+    },
     loadRepeat() {
       var self = this;
       if (!self.loadFreeze && self.showAmount > self.curAmount) {
@@ -143,19 +159,12 @@ export default {
       this.classID=classID
       this.currentClass=name
     },
-    // //获取课程
-    // getClass(id) {
-    //   this.$store
-    //     .dispatch("GetAllCourseForClass", {
-    //       classID: 28,
-    //       date_start: "2018-11-01",
-    //       date_end: "2018-11-30"
-    //     })
-    //     .then(res => {
-    //       console.log(res);
-    //       this.courseList = res.courseList;
-    //     });
-    // },
+    getDate(str){
+      if(str){
+        return new Date(str)
+      }
+      return new Date()
+    }
     //上传图片成
   },
   mounted() {
@@ -163,6 +172,11 @@ export default {
     this.getAllSubClassList(this.schoolID);
     // this.getClass();
     this.getMounth();
+  },
+  created(){
+    let date = this.getDate()
+    this.nowDate.year = date.getFullYear()
+    this.nowDate.month = date.getMonth() + 1
   }
 };
 </script>
@@ -259,6 +273,12 @@ p {
             align-items: center;
             justify-content: space-around;
             padding: 10px 0;
+            i.changeLeft{
+              cursor: pointer;
+            }
+            i.changeRight{
+              cursor: pointer;
+            }
           }
           .classTime {
             height: calc(100% - 60px);

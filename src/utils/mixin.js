@@ -119,6 +119,10 @@ export const getDayCountOfMonth = function(year, month) {
   }
   return 31;
 };
+//修改日期
+export const modifyDate = function(date, y, m, d) {
+  return new Date(y, m, d, date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds());
+};
 
 export const changeYearMonthAndClampDate = function(date, year, month) {
   // clamp date to the number of days in `year`, `month`
@@ -141,5 +145,21 @@ export const nextYear = function(date, amount = 1) {
   const year = date.getFullYear();
   const month = date.getMonth();
   return changeYearMonthAndClampDate(date, year + amount, month);
+};
+
+export const prevMonth = function(date) {
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  return month === 0
+    ? changeYearMonthAndClampDate(date, year - 1, 11)
+    : changeYearMonthAndClampDate(date, year, month - 1);
+};
+
+export const nextMonth = function(date) {
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  return month === 11
+    ? changeYearMonthAndClampDate(date, year + 1, 0)
+    : changeYearMonthAndClampDate(date, year, month + 1);
 };
 
