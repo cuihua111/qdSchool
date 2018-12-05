@@ -21,6 +21,7 @@
                     v-for="item in courseList"
                     :key="item.name"
                     :label="item.id"
+                    :value="item.id"
                   >{{item.name}}</el-radio>
                 </el-radio-group>
               </el-form-item>
@@ -69,7 +70,9 @@
                       :data="{token:tokenOption.token}"
                       list-type="picture-card"
                     >
-                      <i v-if="uploadArr.length!=1" style="font-size:26px;" class="el-icon-upload"></i>
+                      <!-- v-if="uploadArr.length!=1" -->
+                      <!-- <i style="font-size:26px;" class="el-icon-upload"></i> -->
+                      <img class="uploadImg" src="/static/images/upload.png" alt="">
                       <div class="el-upload__text">支持添加图片、课件、视频,不超过50M</div>
                       <!-- <img :src="uploadArr[0]" alt=""> -->
                     </el-upload>
@@ -142,7 +145,7 @@ export default {
       courseForm: {
         startTime: "",
         endTime: "",
-        subjectID: "",
+        subjectID: 1,
         teacherID: [],
         classIDList: [],
         course_desc: "",
@@ -284,6 +287,7 @@ export default {
   .content {
     display: flex;
     height: calc(100% - 61px);
+    background-color: #fff;
     .aside {
       width: 186px;
       border-right: 1px solid #e6e6e6;
@@ -324,16 +328,29 @@ export default {
               }
             }
             .el-upload--picture-card {
+              display: flex;
+              flex-direction: column;
+              justify-content: space-around;
+              align-items: center;
               width: 125px;
               height: 172px;
-              line-height: 35px;
+              line-height: 25px;
               border: 1px solid #e6e6e6;
+              padding: 20px 0;
+              i{
+                color: #f84c4c;
+              }
             }
             img {
               width: 125px;
               height: 172px;
               border-radius: 4px;
               margin-right: 10px;
+              &.uploadImg{
+                width: 26px;
+                height: 26px;
+                margin-right: 0;
+              }
             }
           }
         }
@@ -356,6 +373,7 @@ export default {
             padding: 0;
             &.confirm {
               background: #40b9e6;
+              border-color: #40b9e6;
             }
             &:nth-of-type(2) {
               margin: 0 15px;

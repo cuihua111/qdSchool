@@ -3,7 +3,7 @@
     <div class="container">
       <div class="title">
         <div class="back" @click="backToCourse">
-          <img src="/static/images/back.png" alt>
+          <img src="/static/images/back_blue.png" alt>
           <span>返回</span>
         </div>课程详情
         <div class="status">
@@ -53,7 +53,10 @@
                     <b v-if="index!=courseDetails.teacherNameList.length-1">、</b>
                   </span>
                 </div>
-                <div class="selecteditems" v-else @click="showTeacherList">{{selectTearcherName}}<i class="iconarrow el-icon-arrow-down"></i></div>
+                <div class="selecteditems" v-else @click="showTeacherList">
+                  {{selectTearcherName}}
+                  <i class="iconarrow el-icon-arrow-down"></i>
+                </div>
               </el-form-item>
               <el-form-item label="上课班级：">
                 <div v-if="!isEdit">
@@ -62,14 +65,18 @@
                     <b v-if="index!=courseDetails.classNameList.length-1">、</b>
                   </span>
                 </div>
-                <el-select v-else multiple v-model="courseDetails.classIDList" placeholder="请选择">
+                <div class="selecteditems" v-else @click="showClassList">
+                  {{selectClassName}}
+                  <i class="iconarrow el-icon-arrow-down"></i>
+                </div>
+                <!-- <el-select v-else multiple v-model="courseDetails.classIDList" placeholder="请选择">
                   <el-option
                     v-for="item in classList"
                     :key="item.classID"
                     :label="item.className"
                     :value="item.classID"
                   ></el-option>
-                </el-select>
+                </el-select>-->
               </el-form-item>
               <el-form-item label="上课内容：">
                 <div v-if="!isEdit">{{courseDetails.course_desc}}</div>
@@ -113,7 +120,7 @@
               <el-button @click="deleteCourse">删除</el-button>
             </div>
             <div v-show="!isRelease" class="oneBtn">
-              <el-button type="primary">发布</el-button>
+              <el-button @click="releaseCourse" type="primary">发布</el-button>
             </div>
           </div>
           <div style="text-align:right; margin-bottom: 50px;" v-else>
@@ -130,25 +137,35 @@
         <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
       </span>
     </el-dialog>
-    <choose-teacher  
+
+    <!-- 选择老师组件 -->
+    <choose-teacher
       v-if="tdialogVisible"
       @chageDialogVisible="chageDialogVisible"
       @confirmClassList="confirmClassList"
-      :dialogVisible="tdialogVisible" 
-      :chooseArr="chooseArr" 
-      :tearchList="tearchList"></choose-teacher>
-      <el-dialog title="修改假期" @before-close="beforeClose" :visible.sync="updateHolidayFormVisible">
-        <Calendar
-          @choseDay="clickDay"
-          @changeMonth="changeDate"
-          :markDate="markDate"
-        ></Calendar>
-        <div class="vacations">假期：{{markDate.length}}天</div>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="cancelUpdateHoliday">取 消</el-button>
-          <el-button @click="confirmUpdateHoliday">确 定</el-button>
-        </div>
-      </el-dialog>
+      :dialogVisible="tdialogVisible"
+      :chooseArr="chooseArr"
+      :tearchList="tearchList"
+    ></choose-teacher>
+    <!-- 选择老师组件 -->
+    <!-- 选择班级组件 -->
+    <chooseClass
+      v-if="dialogVisibleChooseClass"
+      @choosenClassChange="choosenClassChange"
+      @chageDialogVisible="chageDialogVisibleChooseClass"
+      @confirmClassList="confirmClassListChooseClass"
+      :dialogVisible="dialogVisibleChooseClass"
+      :classList="classList"
+    ></chooseClass>
+    <!-- 选择班级组件 -->
+    <el-dialog title="修改假期" @before-close="beforeClose" :visible.sync="updateHolidayFormVisible">
+      <Calendar @choseDay="clickDay" @changeMonth="changeDate" :markDate="markDate"></Calendar>
+      <div class="vacations">假期：{{markDate.length}}天</div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancelUpdateHoliday">取 消</el-button>
+        <el-button @click="confirmUpdateHoliday">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -159,8 +176,9 @@ import { zh } from "vuejs-datepicker/dist/locale";
 export default {
   components: {
     Datepicker,
-    chooseTeacher: ()=>import('@/components/classSchedule/chooseTeacher.vue'),
-    Calendar: ()=>import('@/components/calendarComponents')
+    chooseTeacher: () => import("@/components/classSchedule/chooseTeacher.vue"),
+    Calendar: () => import("@/components/calendarComponents"),
+    chooseClass: () => import("@/components/chooseClass/index.vue")
   },
   data() {
     return {
@@ -169,7 +187,8 @@ export default {
       tdialogVisible: false,
       tearchList: [],
       chooseArr: [],
-      selectTearcherName: '',
+      selectTearcherName: "",
+      selectClassName: "",
       zh,
       dialogVisible: false,
       courseDetails: {},
@@ -235,21 +254,22 @@ export default {
         is_topublish: 0,
         courseID: ""
       },
-      currentDate: "" //格式化时间
+      currentDate: "", //格式化时间
+      dialogVisibleChooseClass: false,
+      choosenClass: [] //已选择的班级
     };
   },
-  computed: {
-  },
+  computed: {},
   methods: {
-    cancelUpdateHoliday(){},
-    confirmUpdateHoliday(){},
-    beforeClose(done){
-        this.delSubmitDate = []
-        this.delSubmitIds = []
-        this.addSubmitDate = []
+    cancelUpdateHoliday() {},
+    confirmUpdateHoliday() {},
+    beforeClose(done) {
+      this.delSubmitDate = [];
+      this.delSubmitIds = [];
+      this.addSubmitDate = [];
     },
-    clickDay(data){
-      let index = this.markDate.indexOf(data)
+    clickDay(/* data */) {
+      let index = this.markDate.indexOf(data);
       // if(index<0){
       //   this.markDate.push(data)
       //   if(this.addSubmitDate.indexOf(this.formatsDate(data))<0){
@@ -269,28 +289,64 @@ export default {
       //   })
       // }
     },
-    changeDate(){},
-    cloneCourse(){
-      this.updateHolidayFormVisible = true
+    /**
+     * @description  选择班级确认按钮事件
+     *
+     */
+    confirmClassList(val) {
+      this.chageDialogVisibleChooseClass();
+      this.choosenClass = val;
     },
-    showTeacherList(){
-      this.tdialogVisible = true
+    /**
+     * @description 子像父传弹框是否显示
+     */
+    chageDialogVisibleChooseClass() {
+      this.dialogVisibleChooseClass = false;
     },
-    //弹窗确定回调
-    confirmClassList(val){
-      this.tdialogVisible = false
-      let selectTearcherNameArr = []
-      val.map((item)=>{
-        this.chooseArr.push(item.uid)
-        selectTearcherNameArr.push(item.nickname)
-      })
-      this.selectTearcherName = selectTearcherNameArr.join(', ')
+    // confirmClassListChooseClass(val) {
+    //   this.chageDialogVisibleChooseClass();
+    //   this.choosenClass = val;
+    //   console.log(this.choosenClass, "ssssss");
+    // },
+    choosenClassChange(val) {
+      // console.log(val, 11111);
+      // this.choosenClass = val;
     },
-    chageDialogVisible(val){
-      this.tdialogVisible = false
+    //弹窗确定回调 （选择班级）
+    confirmClassListChooseClass(val) {
+      this.dialogVisibleChooseClass = false;
+      let selectClassNameArr = [];
+      val.map(item => {
+        this.choosenClass.push(item.id);
+        selectClassNameArr.push(item.title);
+      });
+      this.selectClassName = selectClassNameArr.join(", ");
     },
-    backToCourse(){
-      this.$router.go(-1)
+    changeDate() {},
+    cloneCourse() {
+      this.updateHolidayFormVisible = true;
+    },
+    showTeacherList() {
+      this.tdialogVisible = true;
+    },
+    showClassList() {
+      this.dialogVisibleChooseClass = true;
+    },
+    //弹窗确定回调 (选择老师)
+    confirmClassList(val) {
+      this.tdialogVisible = false;
+      let selectTearcherNameArr = [];
+      val.map(item => {
+        this.chooseArr.push(item.uid);
+        selectTearcherNameArr.push(item.nickname);
+      });
+      this.selectTearcherName = selectTearcherNameArr.join(", ");
+    },
+    chageDialogVisible(val) {
+      this.tdialogVisible = false;
+    },
+    backToCourse() {
+      this.$router.go(-1);
     },
     //获取课程详情
     getCourseDetails() {
@@ -301,10 +357,16 @@ export default {
         .then(res => {
           console.log(res, "sssss");
           this.courseDetails = res;
-          res.teacherIDList.map((item, index)=>{
-            this.chooseArr.push(item)
-          })
-          this.selectTearcherName = res.teacherNameList.join(', ')
+          res.teacherIDList.map((item, index) => {
+            this.chooseArr.push(item);
+          });
+          this.selectTearcherName = res.teacherNameList.join(", ");
+          //创建历史数组用来做班级数据回显
+          let tempArr = [];
+          res.classNameList.map((item, index) => {
+            tempArr.push(item.className);
+          });
+          this.selectClassName = tempArr.join(", ");
           this.chooseTime =
             this.$moment(res.startTime).format("HH:mm") +
             " - " +
@@ -327,11 +389,12 @@ export default {
     },
     //编辑课程
     editCpurse() {
+      console.log(this.choosenClass,this.chooseArr,'qqqqq')
       let tempObj = {
         startTime: "",
         endTime: "",
         subjectID: this.courseDetails.subjectID,
-        teacherID: this.courseDetails.teacherIDList,
+        teacherID: this.choosenClass,
         classIDList: this.courseDetails.classIDList,
         course_desc: this.courseDetails.course_desc,
         kejianList: [0],
@@ -371,12 +434,12 @@ export default {
     getAllSubClassList() {
       let _this = this;
       this.$store
-        .dispatch("GetAllSubClassList", {
+        .dispatch("GetAllOrganizationForSchool", {
           schoolID: JSON.parse(getSessionStorage("userInfo")).schoolId
         })
         .then(res => {
           console.log(res);
-          this.classList = res.subClassList;
+          this.classList = res.list_class;
         });
     },
     //删除课程
@@ -421,6 +484,7 @@ export default {
         this.tokenOption = res;
       });
     },
+    //图片上传前
     beforeAvatarUpload(file) {
       const isLt2M = file.size / 1024 / 1024 < 50;
 
@@ -428,18 +492,19 @@ export default {
         this.$message.error("上传头像图片大小不能超过 2MB!");
       }
       return isLt2M;
-    }
+    },
+    releaseCourse() {}
   },
   mounted() {
     // if (this.isEdit) {
-      this.getAllSubClassList();
+    this.getAllSubClassList();
     // }
     this.getUploadToken();
   },
-  created(){
+  created() {
     this.getAllTeachersOfSchool();
     this.getCourseDetails();
-    this.isEdit = this.$route.query.isEdit || null
+    this.isEdit = this.$route.query.isEdit || null;
   }
 };
 </script>
@@ -459,6 +524,7 @@ export default {
       color: #333;
       text-align: center;
       position: relative;
+      background-color: #fff;
       .back,
       .status {
         position: absolute;
@@ -495,6 +561,7 @@ export default {
         border-right: 1px solid #e6e6e6;
         box-sizing: border-box;
         padding-left: 20px;
+        background-color: #fff;
         .font20 {
           font-size: 20px;
           color: #333;
@@ -517,13 +584,13 @@ export default {
         background-color: #fff;
         padding: 55px 65px 0;
         .formBox {
-          .selecteditems{
+          .selecteditems {
             cursor: pointer;
             width: 195px;
             position: relative;
-            overflow:hidden;
-            text-overflow:ellipsis;
-            white-space:nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
             -webkit-appearance: none;
             background-color: #fff;
             border-radius: 4px;
@@ -535,7 +602,7 @@ export default {
             line-height: 40px;
             outline: none;
             padding: 0 15px;
-            &>.iconarrow{
+            & > .iconarrow {
               position: absolute;
               line-height: 40px;
               width: 25px;
@@ -545,14 +612,14 @@ export default {
               top: 0;
               text-align: center;
               color: #c0c4cc;
-              transition: all .3s;
+              transition: all 0.3s;
               pointer-events: none;
             }
           }
           .kejianList {
             display: flex;
             flex-wrap: wrap;
-            .upload{
+            .upload {
               margin-right: 10px;
             }
             .el-upload-list--picture-card {
@@ -581,7 +648,6 @@ export default {
           justify-content: flex-end;
           padding: 10px 20px;
           margin-bottom: 50px;
-          background-color: #ccc;
           .threeBtn {
             .el-button {
               display: inline-block;
