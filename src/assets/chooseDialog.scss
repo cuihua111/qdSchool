@@ -1,0 +1,60 @@
+.chooseDialog {
+  .chooseDialogContainer {
+    display: flex;
+    .classlist {
+      .el-tree-node__expand-icon {
+        color: #999999;
+        font-size: 24px;
+        padding: 0 !important;
+      }
+      .el-checkbox__inner {
+        width: 20px;
+        height: 17px;
+        background-color: #fff;
+        background: url(/static/images/file.png);
+        background-size: 100%;
+        border: 0;
+        &::after {
+          content: "";
+          position: absolute;
+          left: 100px;
+          width: 16px;
+          height: 16px;
+          border: 0;
+          background: url(/static/images/checked.png);
+        }
+      }
+      &.left {
+        flex: 1;
+      }
+      &.right {
+        height: 30px;
+        flex: 1;
+        .choosenItem {
+          position: relative;
+          padding-left: 30px;
+          &::before {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 17px;
+            background-color: #fff;
+            background: url(/static/images/file.png);
+            background-size: 100%;
+            left: 0;
+          }
+          .choseChooseItme {
+            cursor: pointer;
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background-color: #fff;
+            background: url("/static/images/closeChoosen.png");
+            background-size: 100%;
+            right: 0;
+          }
+        }
+      }
+    }
+  }
+}

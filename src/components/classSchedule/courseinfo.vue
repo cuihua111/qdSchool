@@ -53,14 +53,7 @@
                     <b v-if="index!=courseDetails.teacherNameList.length-1">、</b>
                   </span>
                 </div>
-                <el-select v-else multiple v-model="courseDetails.teacherIDList" placeholder="请选择">
-                  <el-option
-                    v-for="item in teacherList"
-                    :key="item.uid"
-                    :label="item.nickname"
-                    :value="item.uid"
-                  ></el-option>
-                </el-select>
+                <div class="selecteditems" v-else @click="showTeacherList">{{selectTearcherName}}<i class="iconarrow el-icon-arrow-down"></i></div>
               </el-form-item>
               <el-form-item label="上课班级：">
                 <div v-if="!isEdit">
@@ -115,7 +108,7 @@
           </div>
           <div v-if="!isEdit" class="operationBtnList" :style="isRelease==false?styleObj:''">
             <div class="threeBtn">
-              <el-button>复制</el-button>
+              <el-button @click="cloneCourse">复制</el-button>
               <el-button @click="isEdit=!isEdit">编辑</el-button>
               <el-button @click="deleteCourse">删除</el-button>
             </div>
@@ -137,6 +130,25 @@
         <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
       </span>
     </el-dialog>
+    <choose-teacher  
+      v-if="tdialogVisible"
+      @chageDialogVisible="chageDialogVisible"
+      @confirmClassList="confirmClassList"
+      :dialogVisible="tdialogVisible" 
+      :chooseArr="chooseArr" 
+      :tearchList="tearchList"></choose-teacher>
+      <el-dialog title="修改假期" @before-close="beforeClose" :visible.sync="updateHolidayFormVisible">
+        <Calendar
+          @choseDay="clickDay"
+          @changeMonth="changeDate"
+          :markDate="markDate"
+        ></Calendar>
+        <div class="vacations">假期：{{markDate.length}}天</div>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="cancelUpdateHoliday">取 消</el-button>
+          <el-button @click="confirmUpdateHoliday">确 定</el-button>
+        </div>
+      </el-dialog>
   </div>
 </template>
 
@@ -146,10 +158,18 @@ import Datepicker from "vuejs-datepicker";
 import { zh } from "vuejs-datepicker/dist/locale";
 export default {
   components: {
-    Datepicker
+    Datepicker,
+    chooseTeacher: ()=>import('@/components/classSchedule/chooseTeacher.vue'),
+    Calendar: ()=>import('@/components/calendarComponents')
   },
   data() {
     return {
+      updateHolidayFormVisible: false,
+      markDate: [],
+      tdialogVisible: false,
+      tearchList: [],
+      chooseArr: [],
+      selectTearcherName: '',
       zh,
       dialogVisible: false,
       courseDetails: {},
@@ -218,7 +238,57 @@ export default {
       currentDate: "" //格式化时间
     };
   },
+  computed: {
+  },
   methods: {
+    cancelUpdateHoliday(){},
+    confirmUpdateHoliday(){},
+    beforeClose(done){
+        this.delSubmitDate = []
+        this.delSubmitIds = []
+        this.addSubmitDate = []
+    },
+    clickDay(data){
+      let index = this.markDate.indexOf(data)
+      // if(index<0){
+      //   this.markDate.push(data)
+      //   if(this.addSubmitDate.indexOf(this.formatsDate(data))<0){
+      //     this.addSubmitDate.push(this.formatsDate(data))
+      //   }
+      // }else{
+      //   this.delSubmitDate.push(this.formatsDate(data))
+      //   this.markDate.splice(index, 1)
+      //   let res = this.holidayList.filter(item => {
+      //     let times = this.formatsDate(item.notSendTime)
+      //     return this.delSubmitDate.indexOf(times)>=0
+      //   })
+      //   res.forEach(item => {
+      //     if(this.delSubmitIds.indexOf(item.id)<0){
+      //       this.delSubmitIds.push(item.id)
+      //     }
+      //   })
+      // }
+    },
+    changeDate(){},
+    cloneCourse(){
+      this.updateHolidayFormVisible = true
+    },
+    showTeacherList(){
+      this.tdialogVisible = true
+    },
+    //弹窗确定回调
+    confirmClassList(val){
+      this.tdialogVisible = false
+      let selectTearcherNameArr = []
+      val.map((item)=>{
+        this.chooseArr.push(item.uid)
+        selectTearcherNameArr.push(item.nickname)
+      })
+      this.selectTearcherName = selectTearcherNameArr.join(', ')
+    },
+    chageDialogVisible(val){
+      this.tdialogVisible = false
+    },
     backToCourse(){
       this.$router.go(-1)
     },
@@ -231,6 +301,10 @@ export default {
         .then(res => {
           console.log(res, "sssss");
           this.courseDetails = res;
+          res.teacherIDList.map((item, index)=>{
+            this.chooseArr.push(item)
+          })
+          this.selectTearcherName = res.teacherNameList.join(', ')
           this.chooseTime =
             this.$moment(res.startTime).format("HH:mm") +
             " - " +
@@ -290,6 +364,7 @@ export default {
         .then(res => {
           console.log(res);
           this.teacherList = res.teacherList;
+          this.tearchList = res.teacherList;
         });
     },
     //获取当前学校所有班级
@@ -357,12 +432,12 @@ export default {
   },
   mounted() {
     // if (this.isEdit) {
-      this.getAllTeachersOfSchool();
-    this.getAllSubClassList();
+      this.getAllSubClassList();
     // }
     this.getUploadToken();
   },
   created(){
+    this.getAllTeachersOfSchool();
     this.getCourseDetails();
     this.isEdit = this.$route.query.isEdit || null
   }
@@ -442,6 +517,38 @@ export default {
         background-color: #fff;
         padding: 55px 65px 0;
         .formBox {
+          .selecteditems{
+            cursor: pointer;
+            width: 195px;
+            position: relative;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap;
+            -webkit-appearance: none;
+            background-color: #fff;
+            border-radius: 4px;
+            border: 1px solid #dcdfe6;
+            box-sizing: border-box;
+            color: #606266;
+            font-size: inherit;
+            height: 40px;
+            line-height: 40px;
+            outline: none;
+            padding: 0 15px;
+            &>.iconarrow{
+              position: absolute;
+              line-height: 40px;
+              width: 25px;
+              text-align: center;
+              height: 100%;
+              right: 5px;
+              top: 0;
+              text-align: center;
+              color: #c0c4cc;
+              transition: all .3s;
+              pointer-events: none;
+            }
+          }
           .kejianList {
             display: flex;
             flex-wrap: wrap;

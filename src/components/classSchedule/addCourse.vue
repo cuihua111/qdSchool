@@ -74,23 +74,14 @@
                       <!-- <img :src="uploadArr[0]" alt=""> -->
                     </el-upload>
                   </div>
-                  <div v-if="courseForm.kejianList.length > 0" v-for="(item,index) in courseForm.kejianList" :key="'kj'+index">
-                    <img :src="item.url_cover" alt>
-                  </div>
-                  <div v-if="courseForm.course_picList.length > 0" v-for="(item,index) in courseForm.course_picList" :key="'pic'+index">
-                    <img :src="item" alt>
-                  </div>
-                  <div v-if="courseForm.course_videoList.length > 0" v-for="(item,index) in courseForm.course_videoList" :key="'video'+index">
-                    <img :src="item" alt>
-                  </div>
                 </div>
               </el-form-item>
             </el-form>
           </div>
           <div class="operationBtnList" :style="isRelease==false?styleObj:''">
             <div class="threeBtn">
-              <el-button @click="cancel">取消</el-button>
-              <el-button class="confirm" type="primary" @click="save">保存</el-button>
+              <el-button class="saveForm" @click="cancel">保存</el-button>
+              <el-button class="confirm publishForm" type="primary" @click="save">发布</el-button>
               <!-- <el-button @click="isEdit=!isEdit">编辑</el-button>
               <el-button @click="deleteCourse">删除</el-button>-->
             </div>
@@ -352,7 +343,6 @@ export default {
         justify-content: flex-end;
         padding: 10px 20px;
         margin-bottom: 50px;
-        background-color: #ccc;
         .threeBtn {
           .el-button {
             display: inline-block;
@@ -373,6 +363,15 @@ export default {
             &:nth-of-type(3) {
               color: #f84c4c;
             }
+          }
+          .saveForm{
+            background-color: #fff;
+            border: 1px solid #40b9e6;
+            color: #40b9e6;
+          }
+          .publishForm{
+            background-color: #40b9e6;
+            color: #fff;
           }
         }
         .oneBtn {

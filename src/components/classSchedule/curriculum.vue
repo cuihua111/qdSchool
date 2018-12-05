@@ -101,7 +101,6 @@ export default {
           ]
         });
       }
-      console.log(res,this.date.year, this.date.month, this.week,  'ssss')
       return res;
     }
   },
