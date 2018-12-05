@@ -15,8 +15,6 @@
           node-key="id"
           :data="classList"
           :props="defaultProps"
-          @node-click="handleNodeClick"
-          @check="checkFunc"
           @check-change="handleCheckChange"
           class="manager-tree"
         ></el-tree>
@@ -63,6 +61,11 @@ export default {
       deep:true
     }
   },
+  computed:{
+    getCheckedNodes(){
+      return this.$refs.tree.getCheckedNodes()
+    },
+  },
   data() {
     return {
       choosenClass: [], //已选择的班级
@@ -72,42 +75,45 @@ export default {
       }
     };
   },
+  mounted(){
+    console.log(this.classList, 'asdasd')
+  },
   methods: {
+    currChange(data, node){
+      console.log(data, node)
+    },
     //弹框关闭前
     handleClose() {
       this.$emit('chageDialogVisible')
     },
     //点击确定按钮
     confirmBtnClick(){
-      this.$emit('chageDialogVisible')
+      this.$emit('confirmClassList', this.choosenClass)
     },
     handleNodeClick(data) {
-      this.choosenClass.push(data);
-      let set = new Set(this.choosenClass);
-      this.choosenClass = Array.from(set);
-      console.log(this.choosenClass)
     },
     closeChoosenItme(item) {
-      console.log(this.choosenClass)
       this.choosenClass.splice(this.choosenClass.indexOf(item), 1);
       this.$refs.tree.setCheckedNodes(this.choosenClass);
     },
-    handleCheckChange(data, checked) {
-      let sameEle=null
-      for(let i=0;i<this.choosenClass.length;i++){
-        if(data.id==this.choosenClass[i].id){
-          sameEle=this.choosenClass[i]
-        }
-      }
-      if (!checked) {
-        this.choosenClass.splice(this.choosenClass.indexOf(sameEle), 1);
-        // console.log(this.choosenClass);
-      }
+    findItem(data){
+      return this.choosenClass.filter((item) => {
+        return item.id == data.id
+      })
     },
-    checkFunc(data) {
-      this.choosenClass.push(data);
-      let set = new Set(this.choosenClass);
-      this.choosenClass = Array.from(set);
+    handleCheckChange(data, checked, childChecked) {
+      this.choosenClass = []
+      console.log(this.getCheckedNodes,data, checked, childChecked, 'ssssss')
+      this.getCheckedNodes.map((item) => {
+        if(!item.list_subclass || item.list_subclass.length == 0){
+          if(this.findItem(item).length == 0){
+            this.choosenClass.push(item)
+          }
+        }
+      })
+    },
+    checkFunc(data, checked) {
+      this.handleCheckChange(data, checked)
     }
   }
 };

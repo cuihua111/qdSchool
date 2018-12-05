@@ -49,6 +49,7 @@
     <chooseClass
       @choosenClassChange="choosenClassChange"
       @chageDialogVisible="chageDialogVisible"
+      @confirmClassList="confirmClassList"
       :dialogVisible="dialogVisible"
       :classList="classList"
     ></chooseClass>
@@ -74,6 +75,10 @@ export default {
   },
 
   methods: {
+    confirmClassList(val){
+      this.chageDialogVisible()
+      this.choosenClass = val
+    },
     backToHome() {
       this.$router.go(-1);
     },
@@ -94,9 +99,14 @@ export default {
         });
     },
     dropdownChoose(command) {
-      this.choosenSchool.push(command);
-      let set = new Set(this.choosenSchool);
-      this.choosenSchool = Array.from(set);
+      let sameItem = this.choosenSchool.filter((item) => {
+        return item.id == command.id
+      })
+      if(sameItem.length == 0){
+        this.choosenSchool.push(command);
+      }
+      // let set = new Set(this.choosenSchool);
+      // this.choosenSchool = Array.from(set);
       this.tipText1 = `已选择${this.choosenSchool.length}个院校`;
     },
     //子像父传弹框是否显示
@@ -105,8 +115,8 @@ export default {
     },
     //子像父传递已选择班级
     choosenClassChange(val) {
-      console.log(val, 11111);
-      this.choosenClass = val;
+      // console.log(val, 11111);
+      // this.choosenClass = val;
     },
     //导出表格
     exportExcel() {

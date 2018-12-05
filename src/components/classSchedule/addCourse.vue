@@ -182,7 +182,6 @@ export default {
       this.courseForm.endTime = this.timeChoose.split("-")[1];
       this.courseForm.endTime =
         this.currentDate.split(" ")[0] + " " + this.courseForm.endTime + ":00";
-
       this.$store.dispatch("CreateCourse", this.courseForm).then(res => {
         this.$router.go(-1);
       });
