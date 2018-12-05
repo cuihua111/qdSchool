@@ -3,7 +3,7 @@
     <div class="table">
       <ul class="header">
         <li v-for="(day, key) in dayList" :key="key">
-          <p>{{day.day}}</p>
+          <p>{{day.day}}日</p>
           <p>{{day.week}}</p>
         </li>
       </ul>
@@ -22,7 +22,7 @@
               <s @click="$router.push({path:`/CourseInfo/${item1.id}`,query:{currentClass}})">查看</s>
             </p>
             <div class="operationBox">
-              <span class="delete"></span>
+              <span class="delete" @click='deleteCourse(item1.id)' ></span>
               <span class="edit" @click="editCourse(item1, item)"></span>
             </div>
             <div
@@ -61,7 +61,7 @@ import {
   nextYear
 } from "@/utils/mixin";
 export default {
-  props: ["classID","currentClass"],
+  props: ["classID", "currentClass"],
   data() {
     return {
       courseData: []
@@ -118,7 +118,7 @@ export default {
       }
     },
     addCourse(data) {
-      console.log(data)
+      console.log(data);
       this.$router.push({
         path: "/AddCourse",
         query: {
@@ -151,6 +151,31 @@ export default {
           addData: time.date
         }
       });
+    },
+    //删除课程
+    deleteCourse(id) {
+      this.$confirm("确定删除该课程？", "", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.$store
+            .dispatch("DelCourse", {
+              courseID: id
+            })
+            .then(res => {
+              console.log(res);
+              this.$message.success("成功删除课程");
+              this.getClass(id)
+            });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
     }
   },
   mounted() {
@@ -191,6 +216,7 @@ export default {
   .body {
     display: flex;
     width: 100%;
+    max-height: 498px;
     .columns {
       width: 120px;
       // flex: 0 0 120px;
@@ -233,6 +259,12 @@ export default {
             height: 20px;
           }
           span {
+            color: #666;
+            font-size: 14px;
+            &:first-of-type {
+              font-size: 18px;
+              color: #333;
+            }
             &.course_desc {
               max-width: 110px;
               display: -webkit-box;
@@ -259,6 +291,7 @@ export default {
             height: 16px;
             bottom: 10px;
             cursor: pointer;
+            // z-index: 1;
             &.delete {
               background-image: url("/static/images/deleteIcon.png");
               right: 40px;
@@ -277,10 +310,11 @@ export default {
             transition: all 1s;
             p {
               display: flex;
+              cursor: pointer;
             }
           }
         }
-        .noCouresCh {
+        &.noCouresCh {
           p {
             display: none;
           }
@@ -288,6 +322,7 @@ export default {
             transition: all 1s;
             p {
               display: flex;
+              cursor: pointer;
             }
           }
         }

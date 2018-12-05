@@ -142,7 +142,7 @@ export default {
       this.liCheckedIndex=index;
       this.classID=classID
       this.currentClass=name
-    }
+    },
     // //获取课程
     // getClass(id) {
     //   this.$store
@@ -155,7 +155,8 @@ export default {
     //       console.log(res);
     //       this.courseList = res.courseList;
     //     });
-    // }
+    // },
+    //上传图片成
   },
   mounted() {
     this.schoolID = JSON.parse(getSessionStorage("userInfo")).schoolId;
@@ -240,7 +241,7 @@ p {
         }
       }
       .tableBox {
-        width: calc(100% - 186px);
+        width: calc(100% - 231px);
         margin-left: 45px;
         margin-top: 40px;
 
