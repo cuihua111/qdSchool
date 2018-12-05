@@ -99,14 +99,10 @@ export default {
         });
     },
     dropdownChoose(command) {
-      let sameItem = this.choosenSchool.filter((item) => {
-        return item.id == command.id
-      })
-      if(sameItem.length == 0){
         this.choosenSchool.push(command);
-      }
-      // let set = new Set(this.choosenSchool);
-      // this.choosenSchool = Array.from(set);
+      console.log(this.choosenSchool, 'asas')
+      let set = new Set(this.choosenSchool);
+      this.choosenSchool = Array.from(set);
       this.tipText1 = `已选择${this.choosenSchool.length}个院校`;
     },
     //子像父传弹框是否显示
