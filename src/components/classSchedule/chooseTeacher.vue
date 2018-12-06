@@ -1,7 +1,7 @@
 <template>
 	<el-dialog
     class="chooseDialog"
-    title="选择班级"
+    title="选择任课教师"
     :visible.sync="dialogVisible"
     width="30%"
     :before-close="handleClose"

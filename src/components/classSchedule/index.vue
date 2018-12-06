@@ -3,7 +3,7 @@
     <div class="container">
       <div class="title">
         <div class="back">
-          <img src="../../assets/image_art/back.png" alt>
+          <img src="/static/images/back_blue.png" alt>
           <span>返回</span>
         </div>课程表
       </div>
@@ -171,7 +171,7 @@ export default {
     this.schoolID = JSON.parse(getSessionStorage("userInfo")).schoolId;
     this.getAllSubClassList(this.schoolID);
     // this.getClass();
-    this.getMounth();
+    // this.getMounth();
   },
   created(){
     let date = this.getDate()
@@ -198,6 +198,7 @@ p {
       color: #333;
       text-align: center;
       position: relative;
+      background-color: #fff;
       .back {
         position: absolute;
         color: #4dc2fd;
@@ -239,6 +240,9 @@ p {
           }
         }
         ul {
+          max-height: 647px;
+          overflow-y: scroll;
+          // box-shadow:inset 0px 40px 55px -25px #4dc2fd;
           li {
             height: 44px;
             line-height: 44px;
@@ -255,10 +259,9 @@ p {
         }
       }
       .tableBox {
-        width: calc(100% - 231px);
-        margin-left: 45px;
-        margin-top: 40px;
-
+        width: calc(100% - 271px);
+        padding:  38px 40px 0 45px;
+        background-color: #fff;
         .aside {
           border-right: 1px solid #e6e6e6;
           width: 90px !important;
@@ -301,123 +304,20 @@ p {
                 border-bottom: 1px solid #e6e6e6;
                 box-sizing: border-box;
               }
+              &:last-of-type{
+                border-bottom: 1px solid #e6e6e6;
+              }
             }
           }
         }
         .el-container {
           display: -webkit-box;
           border: 1px solid #e6e6e6;
+          border-bottom: 0;
           box-sizing: border-box;
         }
         .el-main {
           padding: 0;
-        }
-        .mainDiv {
-          height: 100%;
-          overflow: hidden;
-          display: flex;
-          -ms-overflow-style: none;
-          overflow: -moz-scrollbars-none;
-          &::-webkit-scrollbar {
-            width: 0 !important;
-          }
-          ul {
-            flex: 0 0 120px;
-            border-right: 1px solid #e6e6e6;
-            border-top: 0;
-            border-left: 0;
-            box-sizing: border-box;
-            li {
-              height: 165px;
-              flex: 0 0 100px;
-              margin: 0;
-              overflow: hidden;
-              border-bottom: 1px solid #e6e6e6;
-              position: relative;
-              &.canSee {
-                .operationBox {
-                  display: none;
-                  span {
-                    position: absolute;
-                    width: 16px;
-                    height: 16px;
-                    bottom: 10px;
-                    cursor: pointer;
-                    &.delete {
-                      background-image: url("/static/images/deleteIcon.png");
-                      right: 40px;
-                    }
-                    &.edit {
-                      background-image: url("/static/images/editIcon.png");
-                      right: 10px;
-                    }
-                  }
-                }
-                &:hover {
-                  transition: all 1s;
-                  background-color: rgba(0, 0, 0, 0.5);
-                  s {
-                    display: block;
-                    color: #fff;
-                  }
-                  .operationBox {
-                    display: block;
-                  }
-                }
-              }
-              &.add {
-                p {
-                  display: none;
-                }
-                &:hover {
-                  transition: all 1s;
-                  p {
-                    display: flex;
-                  }
-                }
-              }
-              p {
-                height: 100%;
-                display: flex;
-                padding: 35px 0;
-                flex-direction: column;
-                align-items: center;
-                box-sizing: border-box;
-                justify-content: space-around;
-                s {
-                  display: none;
-                  position: absolute;
-                  text-decoration: none;
-                  color: #fff;
-                  font-size: 18px;
-                  cursor: pointer;
-                }
-              }
-            }
-          }
-        }
-        .headerDiv {
-          height: 90px;
-          display: flex;
-          -ms-overflow-style: none;
-          overflow: -moz-scrollbars-none;
-          border-bottom: 1px solid #e6e6e6;
-          box-sizing: border-box;
-          background-color: #f0fcff;
-          &::-webkit-scrollbar {
-            width: 0 !important;
-          }
-          div {
-            height: 90px;
-            display: flex;
-            flex: 0 0 120px;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-around;
-            padding: 10px 0;
-            box-sizing: border-box;
-            border-right: 1px solid #e6e6e6;
-          }
         }
       }
     }

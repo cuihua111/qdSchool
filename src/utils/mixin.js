@@ -162,4 +162,3 @@ export const nextMonth = function(date) {
     ? changeYearMonthAndClampDate(date, year + 1, 0)
     : changeYearMonthAndClampDate(date, year, month + 1);
 };
-

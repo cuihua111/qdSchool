@@ -158,6 +158,7 @@ export default {
     height: 600px;
     margin: 20px auto 0;
     border: 1px solid #ddd;
+    background-color: #fff;
     .title {
       height: 60px;
       font-size: 20px;
