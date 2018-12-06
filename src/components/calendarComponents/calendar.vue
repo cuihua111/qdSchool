@@ -19,7 +19,7 @@ li {
 .wh_top_changge li {
   cursor: pointer;
   display: flex;
-  color: #fff;
+  color: #333;
   font-size: 18px;
   flex: 1;
   justify-content: center;
@@ -34,8 +34,8 @@ li {
 .wh_content_all {
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC",
     "Helvetica Neue", STHeiti, "Microsoft Yahei", Tahoma, Simsun, sans-serif;
-  background-color: darkgray;
-  /* background-color: #0fc37c; */
+  background-color: #fff;
+  color: #bfbfbf;
   width: 100%;
   overflow: hidden;
   padding-bottom: 8px;
@@ -59,7 +59,7 @@ wh_content_item_tag {
   font-size: 15px;
   width: 13.4%;
   text-align: center;
-  color: #fff;
+  /* color: #fff; */
   position: relative;
 }
 .wh_content_item {
@@ -98,8 +98,8 @@ wh_content_item_tag {
 .wh_jiantou1 {
   width: 12px;
   height: 12px;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
+  border-top: 2px solid #4dc2fd;
+  border-left: 2px solid #4dc2fd;
   transform: rotate(-45deg);
 }
 
@@ -111,8 +111,8 @@ wh_content_item_tag {
 .wh_jiantou2 {
   width: 12px;
   height: 12px;
-  border-top: 2px solid #ffffff;
-  border-right: 2px solid #ffffff;
+  border-top: 2px solid #4dc2fd;
+  border-right: 2px solid #4dc2fd;
   transform: rotate(45deg);
 }
 .wh_content_item > .wh_isMark {
@@ -193,12 +193,15 @@ export default {
     this.myDate = new Date();
   },
   methods: {
+    formatsDate(date){
+      return this.$moment(date).format('YYYY-MM-DD HH:mm:ss')
+    },
     setClass(data) {
       let obj = {};
       obj[data.markClassName] = data.markClassName;
       return obj;
     },
-    clickDay: function (item, index) {
+    clickDay(item, index) {
       if (item.otherMonth === 'nowMonth' && !item.dayHide) {
         this.getList(this.myDate, item.date);
       }
@@ -208,7 +211,7 @@ export default {
           : this.NextMonth(item.date);
       }
     },
-    ChoseMonth: function (date, isChosedDay = true) {
+    ChoseMonth(date, isChosedDay = true) {
       date = timeUtil.dateFormat(date);
       this.myDate = new Date(date);
       this.$emit('changeMonth', timeUtil.dateFormat(this.myDate));
@@ -218,7 +221,7 @@ export default {
         this.getList(this.myDate);
       }
     },
-    PreMonth: function (date, isChosedDay = true) {
+    PreMonth(date, isChosedDay = true) {
       date = timeUtil.dateFormat(date);
       this.myDate = timeUtil.getOtherMonth(this.myDate, 'preMonth');
       this.$emit('changeMonth', timeUtil.dateFormat(this.myDate));

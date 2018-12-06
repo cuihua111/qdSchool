@@ -130,19 +130,28 @@
         </div>
       </div>
     </div>
-    <el-dialog title="选择复制至日期" :visible.sync="dialogVisible" width="30%">
-      <Datepicker class="datePicker_M" :language="zh" :inline="true"></Datepicker>
+    <el-dialog title="选择复制至日期"
+     :visible.sync="dialogVisible"
+     @before-close="beforeClose"
+      width="30%">
+      <Calendar 
+        ref="Calendar" 
+        :sundayStart="true" 
+        :markDateMore="markDateMore" 
+        :markDate="markDate" 
+        @choseDay="clickDay" 
+        @changeMonth="changeDate"></Calendar>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button @click="cancelUpdate">取 消</el-button>
+        <el-button type="primary" @click="confirmUpdateDate">确 定</el-button>
       </span>
     </el-dialog>
 
     <!-- 选择老师组件 -->
     <choose-teacher
       v-if="tdialogVisible"
-      @chageDialogVisible="chageDialogVisible"
-      @confirmClassList="confirmClassList"
+      @chageDialogVisible="chageTearcherDialogVisible"
+      @confirmTearcherList="confirmTearcherList"
       :dialogVisible="tdialogVisible"
       :chooseArr="chooseArr"
       :tearchList="tearchList"
@@ -155,17 +164,10 @@
       @chageDialogVisible="chageDialogVisibleChooseClass"
       @confirmClassList="confirmClassListChooseClass"
       :dialogVisible="dialogVisibleChooseClass"
+      :choosenClassArr="choosenClassArr"
       :classList="classList"
     ></chooseClass>
     <!-- 选择班级组件 -->
-    <el-dialog title="修改假期" @before-close="beforeClose" :visible.sync="updateHolidayFormVisible">
-      <Calendar @choseDay="clickDay" @changeMonth="changeDate" :markDate="markDate"></Calendar>
-      <div class="vacations">假期：{{markDate.length}}天</div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="cancelUpdateHoliday">取 消</el-button>
-        <el-button @click="confirmUpdateHoliday">确 定</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
@@ -182,15 +184,17 @@ export default {
   },
   data() {
     return {
-      updateHolidayFormVisible: false,
+      dialogVisible: false, //日期弹窗显隐
+      markDateMore: [],
       markDate: [],
-      tdialogVisible: false,
+      tdialogVisible: false,  //教师弹窗显隐
       tearchList: [],
       chooseArr: [],
+      choosenClassArr: [],  //组件已选数据
+      editClassArr: [],
       selectTearcherName: "",
       selectClassName: "",
       zh,
-      dialogVisible: false,
       courseDetails: {},
       chooseTime: "", //时间
       isRelease: true, //是否发布
@@ -255,95 +259,111 @@ export default {
         courseID: ""
       },
       currentDate: "", //格式化时间
-      dialogVisibleChooseClass: false,
+      dialogVisibleChooseClass: false, //班级弹窗显隐
       choosenClass: [] //已选择的班级
     };
   },
   computed: {},
   methods: {
-    cancelUpdateHoliday() {},
-    confirmUpdateHoliday() {},
+    /* 
+      start clone course
+    */
+    cancelUpdate() {
+      this.dialogVisible = false
+    },
+    confirmUpdateDate() {
+      let copyDate = []
+      this.markDate.map((item)=>{
+        copyDate.push(this.formatsDate(item))
+      })
+      let params = {
+        courseID: this.$route.params.id,
+        dates_publish: copyDate
+      }
+      if(copyDate.length == 0){
+        this.$message.error("请选择日期")
+        return
+      }
+      this.$store
+        .dispatch("CopyCourse", params)
+        .then(res => {
+          this.dialogVisible = false
+        })
+    },
     beforeClose(done) {
-      this.delSubmitDate = [];
-      this.delSubmitIds = [];
-      this.addSubmitDate = [];
     },
-    clickDay(/* data */) {
-      let index = this.markDate.indexOf(data);
-      // if(index<0){
-      //   this.markDate.push(data)
-      //   if(this.addSubmitDate.indexOf(this.formatsDate(data))<0){
-      //     this.addSubmitDate.push(this.formatsDate(data))
-      //   }
-      // }else{
-      //   this.delSubmitDate.push(this.formatsDate(data))
-      //   this.markDate.splice(index, 1)
-      //   let res = this.holidayList.filter(item => {
-      //     let times = this.formatsDate(item.notSendTime)
-      //     return this.delSubmitDate.indexOf(times)>=0
-      //   })
-      //   res.forEach(item => {
-      //     if(this.delSubmitIds.indexOf(item.id)<0){
-      //       this.delSubmitIds.push(item.id)
-      //     }
-      //   })
-      // }
+    formatsDate(date){
+      return this.$moment(date).format('YYYY-MM-DD HH:mm:ss')
     },
-    /**
-     * @description  选择班级确认按钮事件
-     *
-     */
-    confirmClassList(val) {
-      this.chageDialogVisibleChooseClass();
-      this.choosenClass = val;
+    clickDay(data){
+      let index = this.markDate.indexOf(data)
+      if(index < 0){
+        this.markDate.push(data)
+      }else{
+        this.markDate.splice(this.markDate.indexOf(data), 1)
+      }
+      console.log(data, this.markDate)
     },
-    /**
-     * @description 子像父传弹框是否显示
-     */
-    chageDialogVisibleChooseClass() {
-      this.dialogVisibleChooseClass = false;
-    },
-    // confirmClassListChooseClass(val) {
-    //   this.chageDialogVisibleChooseClass();
-    //   this.choosenClass = val;
-    //   console.log(this.choosenClass, "ssssss");
-    // },
-    choosenClassChange(val) {
-      // console.log(val, 11111);
-      // this.choosenClass = val;
-    },
-    //弹窗确定回调 （选择班级）
-    confirmClassListChooseClass(val) {
-      this.dialogVisibleChooseClass = false;
-      let selectClassNameArr = [];
-      val.map(item => {
-        this.choosenClass.push(item.id);
-        selectClassNameArr.push(item.title);
-      });
-      this.selectClassName = selectClassNameArr.join(", ");
-    },
-    changeDate() {},
-    cloneCourse() {
-      this.updateHolidayFormVisible = true;
-    },
+   /* 
+    end clone course
+   */
+    /* 
+      start choose tearcher
+    */
     showTeacherList() {
       this.tdialogVisible = true;
     },
-    showClassList() {
-      this.dialogVisibleChooseClass = true;
-    },
-    //弹窗确定回调 (选择老师)
-    confirmClassList(val) {
-      this.tdialogVisible = false;
-      let selectTearcherNameArr = [];
+    confirmTearcherList(val){
+      this.chageTearcherDialogVisible()
+      let selectTearcherNameArr = []
+      this.chooseArr = []
       val.map(item => {
         this.chooseArr.push(item.uid);
         selectTearcherNameArr.push(item.nickname);
       });
       this.selectTearcherName = selectTearcherNameArr.join(", ");
     },
-    chageDialogVisible(val) {
-      this.tdialogVisible = false;
+    chageTearcherDialogVisible(){
+      this.tdialogVisible = false
+    },
+    /* 
+      choose tearcher end
+    */
+   /* 
+    start choose class 
+   */
+    showClassList() {
+      this.dialogVisibleChooseClass = true;
+    },
+    chageDialogVisibleChooseClass() {
+      this.dialogVisibleChooseClass = false;
+    },
+    choosenClassChange(val) {
+
+    },
+    confirmClassListChooseClass(val) {
+      this.chageDialogVisibleChooseClass()
+      let selectClassNameArr = [];
+      this.editClassArr = []
+      this.choosenClassArr = []
+      val.map(item => {
+        if(this.editClassArr.indexOf(item.id) <0){
+          this.editClassArr.push(item.id)
+        }
+        this.choosenClassArr.push({
+          id: item.id,
+          title: item.title
+        })
+        selectClassNameArr.push(item.title);
+      });
+      this.selectClassName = selectClassNameArr.join(", ");
+    },
+  /* 
+    end choose class
+  */
+    changeDate() {},
+    cloneCourse() {
+      this.dialogVisible = true;
     },
     backToCourse() {
       this.$router.go(-1);
@@ -357,6 +377,7 @@ export default {
         .then(res => {
           console.log(res, "sssss");
           this.courseDetails = res;
+          //已选择教师数组赋值
           res.teacherIDList.map((item, index) => {
             this.chooseArr.push(item);
           });
@@ -365,8 +386,13 @@ export default {
           let tempArr = [];
           res.classNameList.map((item, index) => {
             tempArr.push(item.className);
+            this.choosenClassArr.push({
+              id: item.classID,
+              title: item.className
+            })
           });
           this.selectClassName = tempArr.join(", ");
+          //end class
           this.chooseTime =
             this.$moment(res.startTime).format("HH:mm") +
             " - " +
@@ -394,8 +420,8 @@ export default {
         startTime: "",
         endTime: "",
         subjectID: this.courseDetails.subjectID,
-        teacherID: this.choosenClass,
-        classIDList: this.courseDetails.classIDList,
+        teacherID: this.chooseArr,
+        classIDList: this.editClassArr,
         course_desc: this.courseDetails.course_desc,
         kejianList: [0],
         is_topublish: 0,
@@ -493,7 +519,9 @@ export default {
       }
       return isLt2M;
     },
-    releaseCourse() {}
+    releaseCourse() {
+      
+    }
   },
   mounted() {
     // if (this.isEdit) {
