@@ -137,7 +137,7 @@
       :dialogVisible="tdialogVisible" 
       :chooseArr="chooseArr" 
       :tearchList="tearchList"></choose-teacher>
-      <el-dialog title="修改假期" @before-close="beforeClose" :visible.sync="updateHolidayFormVisible">
+      <el-dialog title="选择复制至日期" @before-close="beforeClose" :visible.sync="updateHolidayFormVisible">
         <Calendar
           @choseDay="clickDay"
           @changeMonth="changeDate"
@@ -248,26 +248,29 @@ export default {
         this.delSubmitIds = []
         this.addSubmitDate = []
     },
+    formatsDate(date){
+        return moment(date).format('YYYY/MM/DD')
+      },
     clickDay(data){
       let index = this.markDate.indexOf(data)
-      // if(index<0){
-      //   this.markDate.push(data)
-      //   if(this.addSubmitDate.indexOf(this.formatsDate(data))<0){
-      //     this.addSubmitDate.push(this.formatsDate(data))
-      //   }
-      // }else{
-      //   this.delSubmitDate.push(this.formatsDate(data))
-      //   this.markDate.splice(index, 1)
-      //   let res = this.holidayList.filter(item => {
-      //     let times = this.formatsDate(item.notSendTime)
-      //     return this.delSubmitDate.indexOf(times)>=0
-      //   })
-      //   res.forEach(item => {
-      //     if(this.delSubmitIds.indexOf(item.id)<0){
-      //       this.delSubmitIds.push(item.id)
-      //     }
-      //   })
-      // }
+      if(index<0){
+        this.markDate.push(data)
+        if(this.addSubmitDate.indexOf(this.formatsDate(data))<0){
+          this.addSubmitDate.push(this.formatsDate(data))
+        }
+      }else{
+        this.delSubmitDate.push(this.formatsDate(data))
+        this.markDate.splice(index, 1)
+        let res = this.holidayList.filter(item => {
+          let times = this.formatsDate(item.notSendTime)
+          return this.delSubmitDate.indexOf(times)>=0
+        })
+        res.forEach(item => {
+          if(this.delSubmitIds.indexOf(item.id)<0){
+            this.delSubmitIds.push(item.id)
+          }
+        })
+      }
     },
     changeDate(){},
     cloneCourse(){
