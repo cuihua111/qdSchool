@@ -1,7 +1,7 @@
 <template>
 	<div class="title">
 			<div class="back" @click="backToUp">
-				<img src="/static/images/back.png" alt>
+				<img src="/static/images/back_blue.png" alt>
 				<span>返回</span>
 			</div>{{titleInfo.centerTitle}}
 			<div class="status" v-if="titleInfo.rightTitle">
@@ -40,6 +40,7 @@ export default {
     color: #333;
     text-align: center;
     position: relative;
+    background-color: #fff;
     .back,
     .status {
       position: absolute;

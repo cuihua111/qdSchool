@@ -1,60 +1,98 @@
 .chooseDialog {
-  .chooseDialogContainer {
-    display: flex;
-    .classlist {
-      .el-tree-node__expand-icon {
-        color: #999999;
-        font-size: 24px;
-        padding: 0 !important;
+  .el-dialog {
+    border-radius: 10px;
+  }
+
+  .el-dialog__header {
+    background-color: #40b9e6;
+    border-radius: 10px 10px 0 0;
+
+    .el-dialog__title {
+      color: #fff;
+    }
+
+    .el-dialog__headerbtn {
+      .el-dialog__close {
+        color: #fff;
+        font-size: 20px;
       }
-      .el-checkbox__inner {
-        width: 20px;
-        height: 17px;
-        background-color: #fff;
-        background: url(/static/images/file.png);
-        background-size: 100%;
-        border: 0;
-        &::after {
-          content: "";
-          position: absolute;
-          left: 100px;
-          width: 16px;
-          height: 16px;
-          border: 0;
-          background: url(/static/images/checked.png);
+    }
+  }
+
+  .el-dialog__body {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    .chooseDialogContainer {
+      display: flex;
+
+      .classlist {
+        margin-bottom: 20px;
+        .el-tree-node__expand-icon {
+          color: #999999;
+          font-size: 24px;
+          padding: 0 !important;
         }
-      }
-      &.left {
-        flex: 1;
-      }
-      &.right {
-        height: 30px;
-        flex: 1;
-        .choosenItem {
-          position: relative;
-          padding-left: 30px;
-          &::before {
+
+        .el-checkbox__inner {
+          width: 20px;
+          height: 17px;
+          background-color: #fff;
+          background: url(/static/images/file.png);
+          background-size: 100%;
+          border: 0;
+
+          &::after {
             content: "";
             position: absolute;
-            width: 20px;
-            height: 17px;
-            background-color: #fff;
-            background: url(/static/images/file.png);
-            background-size: 100%;
-            left: 0;
+            left: 100px;
+            width: 16px;
+            height: 16px;
+            border: 0;
+            background: url(/static/images/checked.png);
           }
-          .choseChooseItme {
-            cursor: pointer;
-            position: absolute;
-            width: 14px;
-            height: 14px;
-            background-color: #fff;
-            background: url("/static/images/closeChoosen.png");
-            background-size: 100%;
-            right: 0;
+        }
+
+        &.left {
+          flex: 1;
+          border-right: 1px solid #e6e6e6;
+        }
+
+        &.right {
+          height: 30px;
+          margin-left: 20px;
+          flex: 1;
+
+          .choosenItem {
+            position: relative;
+            padding-left: 30px;
+
+            &::before {
+              content: "";
+              position: absolute;
+              width: 20px;
+              height: 17px;
+              background-color: #fff;
+              background: url(/static/images/file.png);
+              background-size: 100%;
+              left: 0;
+            }
+
+            .choseChooseItme {
+              cursor: pointer;
+              position: absolute;
+              width: 14px;
+              height: 14px;
+              background-color: #fff;
+              background: url("/static/images/closeChoosen.png");
+              background-size: 100%;
+              right: 0;
+            }
           }
         }
       }
     }
+  }
+  .el-dialog__footer{
+    border-top: 1px solid #e6e6e6;
   }
 }

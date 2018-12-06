@@ -198,18 +198,19 @@ export default {
   margin: 0 auto;
   overflow: hidden;
   overflow-x: auto;
-  border: 1px solid #e6e6e6;
   border-left: 0;
   .header {
     display: flex;
     align-content: center;
     flex-wrap: nowrap;
+     border-bottom: 1px solid #e6e6e6;
     li {
       display: flex;
       flex-direction: column;
       height: 89px;
       flex: 0 0 120px;
       border-right: 1px solid #e6e6e6;
+      background-color: #f0fcff;
       text-align: center;
       padding: 20px 0;
       box-sizing: border-box;
@@ -235,9 +236,10 @@ export default {
         border-bottom: 1px solid #e6e6e6;
         height: 165px;
         position: relative;
-        &:first-child {
-          border-top: 1px solid #e6e6e6;
-        }
+        background-color: #fff;
+        // &:first-child {
+        //   border-top: 1px solid #e6e6e6;
+        // }
         .hasCourse {
           margin: 0;
           padding: 35px 0;
@@ -295,7 +297,7 @@ export default {
             }
           }
           &:hover {
-            transition: all 1s;
+            transition: all .5s;
             background-color: rgba(0, 0, 0, 0.5);
             s {
               display: block;
