@@ -193,12 +193,15 @@ export default {
     this.myDate = new Date();
   },
   methods: {
+    formatsDate(date){
+      return this.$moment(date).format('YYYY-MM-DD HH:mm:ss')
+    },
     setClass(data) {
       let obj = {};
       obj[data.markClassName] = data.markClassName;
       return obj;
     },
-    clickDay: function (item, index) {
+    clickDay(item, index) {
       if (item.otherMonth === 'nowMonth' && !item.dayHide) {
         this.getList(this.myDate, item.date);
       }
@@ -208,7 +211,7 @@ export default {
           : this.NextMonth(item.date);
       }
     },
-    ChoseMonth: function (date, isChosedDay = true) {
+    ChoseMonth(date, isChosedDay = true) {
       date = timeUtil.dateFormat(date);
       this.myDate = new Date(date);
       this.$emit('changeMonth', timeUtil.dateFormat(this.myDate));
@@ -218,7 +221,7 @@ export default {
         this.getList(this.myDate);
       }
     },
-    PreMonth: function (date, isChosedDay = true) {
+    PreMonth(date, isChosedDay = true) {
       date = timeUtil.dateFormat(date);
       this.myDate = timeUtil.getOtherMonth(this.myDate, 'preMonth');
       this.$emit('changeMonth', timeUtil.dateFormat(this.myDate));

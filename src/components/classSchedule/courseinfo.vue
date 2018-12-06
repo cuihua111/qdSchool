@@ -130,11 +130,20 @@
         </div>
       </div>
     </div>
-    <el-dialog title="选择复制至日期" :visible.sync="dialogVisible" width="30%">
-      <Datepicker class="datePicker_M" :language="zh" :inline="true"></Datepicker>
+    <el-dialog title="选择复制至日期"
+     :visible.sync="dialogVisible"
+     @before-close="beforeClose"
+      width="30%">
+      <Calendar 
+        ref="Calendar" 
+        :sundayStart="true" 
+        :markDateMore="markDateMore" 
+        :markDate="markDate" 
+        @choseDay="clickDay" 
+        @changeMonth="changeDate"></Calendar>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button @click="cancelUpdate">取 消</el-button>
+        <el-button type="primary" @click="confirmUpdateDate">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -175,9 +184,10 @@ export default {
   },
   data() {
     return {
-      updateHolidayFormVisible: false,
+      dialogVisible: false, //日期弹窗显隐
+      markDateMore: [],
       markDate: [],
-      tdialogVisible: false,
+      tdialogVisible: false,  //教师弹窗显隐
       tearchList: [],
       chooseArr: [],
       choosenClassArr: [],  //组件已选数据
@@ -185,7 +195,6 @@ export default {
       selectTearcherName: "",
       selectClassName: "",
       zh,
-      dialogVisible: false,
       courseDetails: {},
       chooseTime: "", //时间
       isRelease: true, //是否发布
@@ -250,44 +259,54 @@ export default {
         courseID: ""
       },
       currentDate: "", //格式化时间
-      dialogVisibleChooseClass: false,
+      dialogVisibleChooseClass: false, //班级弹窗显隐
       choosenClass: [] //已选择的班级
     };
   },
   computed: {},
   methods: {
-    cancelUpdateHoliday() {},
-    confirmUpdateHoliday() {},
+    /* 
+      start clone course
+    */
+    cancelUpdate() {
+      this.dialogVisible = false
+    },
+    confirmUpdateDate() {
+      let copyDate = []
+      this.markDate.map((item)=>{
+        copyDate.push(this.formatsDate(item))
+      })
+      let params = {
+        courseID: this.$route.params.id,
+        dates_publish: copyDate
+      }
+      if(copyDate.length == 0){
+        this.$message.error("请选择日期")
+        return
+      }
+      this.$store
+        .dispatch("CopyCourse", params)
+        .then(res => {
+          this.dialogVisible = false
+        })
+    },
     beforeClose(done) {
-      this.delSubmitDate = [];
-      this.delSubmitIds = [];
-      this.addSubmitDate = [];
     },
     formatsDate(date){
-        return moment(date).format('YYYY/MM/DD')
-      },
+      return this.$moment(date).format('YYYY-MM-DD HH:mm:ss')
+    },
     clickDay(data){
       let index = this.markDate.indexOf(data)
-      debugger
-      if(index<0){
+      if(index < 0){
         this.markDate.push(data)
-        if(this.addSubmitDate.indexOf(this.formatsDate(data))<0){
-          this.addSubmitDate.push(this.formatsDate(data))
-        }
       }else{
-        this.delSubmitDate.push(this.formatsDate(data))
-        this.markDate.splice(index, 1)
-        let res = this.holidayList.filter(item => {
-          let times = this.formatsDate(item.notSendTime)
-          return this.delSubmitDate.indexOf(times)>=0
-        })
-        res.forEach(item => {
-          if(this.delSubmitIds.indexOf(item.id)<0){
-            this.delSubmitIds.push(item.id)
-          }
-        })
+        this.markDate.splice(this.markDate.indexOf(data), 1)
       }
+      console.log(data, this.markDate)
     },
+   /* 
+    end clone course
+   */
     /* 
       start choose tearcher
     */
@@ -344,7 +363,7 @@ export default {
   */
     changeDate() {},
     cloneCourse() {
-      this.updateHolidayFormVisible = true;
+      this.dialogVisible = true;
     },
     backToCourse() {
       this.$router.go(-1);
@@ -500,7 +519,9 @@ export default {
       }
       return isLt2M;
     },
-    releaseCourse() {}
+    releaseCourse() {
+      
+    }
   },
   mounted() {
     // if (this.isEdit) {

@@ -44,6 +44,7 @@ import {
   delCourse,
   modifyCourse,
   createCourse,
+  copyCourse,
   exportMemberListInExamHelper
 } from '@/service/getData';
 import {
@@ -596,6 +597,18 @@ const user = {
     CreateCourse({ commit, state }, parameterData) {
       return new Promise((resolve, reject) => {
         createCourse(parameterData).then(response => {
+          resolve(response)
+        }, err => {
+          reject(err)
+        })
+      })
+    },
+     /*
+     * copy课程
+     * */
+    CopyCourse({ commit, state }, parameterData) {
+      return new Promise((resolve, reject) => {
+        copyCourse(parameterData).then(response => {
           resolve(response)
         }, err => {
           reject(err)
