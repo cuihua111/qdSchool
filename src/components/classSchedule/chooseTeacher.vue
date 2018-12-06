@@ -47,6 +47,19 @@ export default {
       default:false
     }
 	},
+	watch: {
+		chooseArr: {
+			handler(newVal, oldVal){
+				this.chooseArr = newVal
+				this.pageTearcherList.map((item)=>{
+					if(this.isSame(item).length > 0){
+						this.choosenTearcher.push(item)
+					}
+				})
+			},
+			deep: true
+		}
+	},
 	computed: {
 		pageTearcherList(){
 			return this.tearchList.map((item)=>{
@@ -75,7 +88,7 @@ export default {
     },
     //点击确定按钮
     confirmBtnClick(){
-      this.$emit('confirmClassList', this.choosenTearcher)
+      this.$emit('confirmTearcherList', this.choosenTearcher)
     },
 		isSame(data){
 			return this.chooseArr.filter((item)=>{

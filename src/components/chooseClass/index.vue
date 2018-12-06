@@ -15,6 +15,7 @@
           node-key="id"
           :data="classList"
           :props="defaultProps"
+          :default-checked-keys="defaultCheckedKeys"
           @check-change="handleCheckChange"
           class="manager-tree"
         ></el-tree>
@@ -51,9 +52,21 @@ export default {
     dialogVisible:{
       type:Boolean,
       default:false
+    },
+    choosenClassArr: {
+      type: Array,
     }
   },
   watch:{
+    choosenClassArr: {
+      handler(newVal, oldVal){
+        this.choosenClass = newVal
+        this.choosenClass.map((item)=>{
+          this.defaultCheckedKeys.push(item.id)
+        })
+      },
+      deep: true
+    },
     choosenClass:{
       handler(oldV,newV){
         this.$emit('choosenClassChange',newV)
@@ -72,11 +85,15 @@ export default {
       defaultProps: {
         children: "list_subclass",
         label: "title"
-      }
+      },
+      defaultCheckedKeys: []
     };
   },
   mounted(){
-    console.log(this.classList, 'asdasd')
+    this.choosenClass = this.choosenClassArr
+    this.choosenClass.map((item)=>{
+      this.defaultCheckedKeys.push(item.id)
+    })
   },
   methods: {
     currChange(data, node){
@@ -102,7 +119,7 @@ export default {
       })
     },
     handleCheckChange(data, checked, childChecked) {
-      this.choosenClass = []
+      // this.choosenClass = []
       console.log(this.getCheckedNodes,data, checked, childChecked, 'ssssss')
       this.getCheckedNodes.map((item) => {
         if(!item.list_subclass || item.list_subclass.length == 0){

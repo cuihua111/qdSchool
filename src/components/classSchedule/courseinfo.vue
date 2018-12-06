@@ -141,8 +141,8 @@
     <!-- 选择老师组件 -->
     <choose-teacher
       v-if="tdialogVisible"
-      @chageDialogVisible="chageDialogVisible"
-      @confirmClassList="confirmClassList"
+      @chageDialogVisible="chageTearcherDialogVisible"
+      @confirmTearcherList="confirmTearcherList"
       :dialogVisible="tdialogVisible"
       :chooseArr="chooseArr"
       :tearchList="tearchList"
@@ -155,6 +155,7 @@
       @chageDialogVisible="chageDialogVisibleChooseClass"
       @confirmClassList="confirmClassListChooseClass"
       :dialogVisible="dialogVisibleChooseClass"
+      :choosenClassArr="choosenClassArr"
       :classList="classList"
     ></chooseClass>
     <!-- 选择班级组件 -->
@@ -179,6 +180,8 @@ export default {
       tdialogVisible: false,
       tearchList: [],
       chooseArr: [],
+      choosenClassArr: [],  //组件已选数据
+      editClassArr: [],
       selectTearcherName: "",
       selectClassName: "",
       zh,
@@ -285,61 +288,63 @@ export default {
         })
       }
     },
-    /**
-     * @description  选择班级确认按钮事件
-     *
-     */
-    confirmClassList(val) {
-      this.chageDialogVisibleChooseClass();
-      this.choosenClass = val;
-    },
-    /**
-     * @description 子像父传弹框是否显示
-     */
-    chageDialogVisibleChooseClass() {
-      this.dialogVisibleChooseClass = false;
-    },
-    // confirmClassListChooseClass(val) {
-    //   this.chageDialogVisibleChooseClass();
-    //   this.choosenClass = val;
-    //   console.log(this.choosenClass, "ssssss");
-    // },
-    choosenClassChange(val) {
-      // console.log(val, 11111);
-      // this.choosenClass = val;
-    },
-    //弹窗确定回调 （选择班级）
-    confirmClassListChooseClass(val) {
-      this.dialogVisibleChooseClass = false;
-      let selectClassNameArr = [];
-      val.map(item => {
-        this.choosenClass.push(item.id);
-        selectClassNameArr.push(item.title);
-      });
-      this.selectClassName = selectClassNameArr.join(", ");
-    },
-    changeDate() {},
-    cloneCourse() {
-      this.updateHolidayFormVisible = true;
-    },
+    /* 
+      start choose tearcher
+    */
     showTeacherList() {
       this.tdialogVisible = true;
     },
-    showClassList() {
-      this.dialogVisibleChooseClass = true;
-    },
-    //弹窗确定回调 (选择老师)
-    confirmClassList(val) {
-      this.tdialogVisible = false;
-      let selectTearcherNameArr = [];
+    confirmTearcherList(val){
+      this.chageTearcherDialogVisible()
+      let selectTearcherNameArr = []
+      this.chooseArr = []
       val.map(item => {
         this.chooseArr.push(item.uid);
         selectTearcherNameArr.push(item.nickname);
       });
       this.selectTearcherName = selectTearcherNameArr.join(", ");
     },
-    chageDialogVisible(val) {
-      this.tdialogVisible = false;
+    chageTearcherDialogVisible(){
+      this.tdialogVisible = false
+    },
+    /* 
+      choose tearcher end
+    */
+   /* 
+    start choose class 
+   */
+    showClassList() {
+      this.dialogVisibleChooseClass = true;
+    },
+    chageDialogVisibleChooseClass() {
+      this.dialogVisibleChooseClass = false;
+    },
+    choosenClassChange(val) {
+
+    },
+    confirmClassListChooseClass(val) {
+      this.chageDialogVisibleChooseClass()
+      let selectClassNameArr = [];
+      this.editClassArr = []
+      this.choosenClassArr = []
+      val.map(item => {
+        if(this.editClassArr.indexOf(item.id) <0){
+          this.editClassArr.push(item.id)
+        }
+        this.choosenClassArr.push({
+          id: item.id,
+          title: item.title
+        })
+        selectClassNameArr.push(item.title);
+      });
+      this.selectClassName = selectClassNameArr.join(", ");
+    },
+  /* 
+    end choose class
+  */
+    changeDate() {},
+    cloneCourse() {
+      this.updateHolidayFormVisible = true;
     },
     backToCourse() {
       this.$router.go(-1);
@@ -353,6 +358,7 @@ export default {
         .then(res => {
           console.log(res, "sssss");
           this.courseDetails = res;
+          //已选择教师数组赋值
           res.teacherIDList.map((item, index) => {
             this.chooseArr.push(item);
           });
@@ -361,8 +367,13 @@ export default {
           let tempArr = [];
           res.classNameList.map((item, index) => {
             tempArr.push(item.className);
+            this.choosenClassArr.push({
+              id: item.classID,
+              title: item.className
+            })
           });
           this.selectClassName = tempArr.join(", ");
+          //end class
           this.chooseTime =
             this.$moment(res.startTime).format("HH:mm") +
             " - " +
@@ -390,8 +401,8 @@ export default {
         startTime: "",
         endTime: "",
         subjectID: this.courseDetails.subjectID,
-        teacherID: this.choosenClass,
-        classIDList: this.courseDetails.classIDList,
+        teacherID: this.chooseArr,
+        classIDList: this.editClassArr,
         course_desc: this.courseDetails.course_desc,
         kejianList: [0],
         is_topublish: 0,
