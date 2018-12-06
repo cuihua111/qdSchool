@@ -253,6 +253,7 @@ export default {
       },
     clickDay(data){
       let index = this.markDate.indexOf(data)
+      debugger
       if(index<0){
         this.markDate.push(data)
         if(this.addSubmitDate.indexOf(this.formatsDate(data))<0){
