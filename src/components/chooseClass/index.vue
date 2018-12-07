@@ -115,12 +115,15 @@ export default {
       this.$refs.tree.setCheckedNodes(this.choosenClass);
     },
     findItem(data){
-      return this.choosenClass.filter((item) => {
-        return item.id == data.id
-      })
+      if(this.choosenClass.length > 0){
+        return this.choosenClass.filter((item) => {
+          return item.id == data.id
+        })
+      }
+      return []
     },
     handleCheckChange(data, checked, childChecked) {
-      // this.choosenClass = []
+      this.choosenClass = []
       console.log(this.getCheckedNodes,data, checked, childChecked, 'ssssss')
       this.getCheckedNodes.map((item) => {
         if(!item.list_subclass || item.list_subclass.length == 0){
