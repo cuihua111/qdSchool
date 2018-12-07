@@ -90,6 +90,7 @@ export default {
     };
   },
   mounted(){
+    if (!this.choosenClassArr) return;
     this.choosenClass = this.choosenClassArr
     this.choosenClass.map((item)=>{
       this.defaultCheckedKeys.push(item.id)
