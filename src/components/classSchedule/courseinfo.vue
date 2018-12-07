@@ -130,17 +130,20 @@
         </div>
       </div>
     </div>
-    <el-dialog title="选择复制至日期"
-     :visible.sync="dialogVisible"
-     @before-close="beforeClose"
-      width="30%">
-      <Calendar 
-        ref="Calendar" 
-        :sundayStart="true" 
-        :markDateMore="markDateMore" 
-        :markDate="markDate" 
-        @choseDay="clickDay" 
-        @changeMonth="changeDate"></Calendar>
+    <el-dialog
+      title="选择复制至日期"
+      :visible.sync="dialogVisible"
+      @before-close="beforeClose"
+      width="30%"
+    >
+      <Calendar
+        ref="Calendar"
+        :sundayStart="true"
+        :markDateMore="markDateMore"
+        :markDate="markDate"
+        @choseDay="clickDay"
+        @changeMonth="changeDate"
+      ></Calendar>
       <span slot="footer" class="dialog-footer">
         <el-button @click="cancelUpdate">取 消</el-button>
         <el-button type="primary" @click="confirmUpdateDate">确 定</el-button>
@@ -187,10 +190,10 @@ export default {
       dialogVisible: false, //日期弹窗显隐
       markDateMore: [],
       markDate: [],
-      tdialogVisible: false,  //教师弹窗显隐
+      tdialogVisible: false, //教师弹窗显隐
       tearchList: [],
       chooseArr: [],
-      choosenClassArr: [],  //组件已选数据
+      choosenClassArr: [], //组件已选数据
       editClassArr: [],
       selectTearcherName: "",
       selectClassName: "",
@@ -269,42 +272,41 @@ export default {
       start clone course
     */
     cancelUpdate() {
-      this.dialogVisible = false
+      this.dialogVisible = false;
     },
+    //复制课程
     confirmUpdateDate() {
-      let copyDate = []
-      this.markDate.map((item)=>{
-        copyDate.push(this.formatsDate(item))
-      })
+      let copyDate = [];
+      this.markDate.map(item => {
+        copyDate.push(this.formatsDate(item));
+      });
       let params = {
         courseID: this.$route.params.id,
         dates_publish: copyDate
+      };
+      if (copyDate.length == 0) {
+        this.$message.error("请选择日期");
+        return;
       }
-      if(copyDate.length == 0){
-        this.$message.error("请选择日期")
-        return
+      this.$store.dispatch("CopyCourse", params).then(res => {
+        this.$message.success('复制课程成功')
+        this.dialogVisible = false;
+      });
+    },
+    beforeClose(done) {},
+    formatsDate(date) {
+      return this.$moment(date).format("YYYY-MM-DD HH:mm:ss");
+    },
+    clickDay(data) {
+      let index = this.markDate.indexOf(data);
+      if (index < 0) {
+        this.markDate.push(data);
+      } else {
+        this.markDate.splice(this.markDate.indexOf(data), 1);
       }
-      this.$store
-        .dispatch("CopyCourse", params)
-        .then(res => {
-          this.dialogVisible = false
-        })
+      console.log(data, this.markDate);
     },
-    beforeClose(done) {
-    },
-    formatsDate(date){
-      return this.$moment(date).format('YYYY-MM-DD HH:mm:ss')
-    },
-    clickDay(data){
-      let index = this.markDate.indexOf(data)
-      if(index < 0){
-        this.markDate.push(data)
-      }else{
-        this.markDate.splice(this.markDate.indexOf(data), 1)
-      }
-      console.log(data, this.markDate)
-    },
-   /* 
+    /* 
     end clone course
    */
     /* 
@@ -313,23 +315,23 @@ export default {
     showTeacherList() {
       this.tdialogVisible = true;
     },
-    confirmTearcherList(val){
-      this.chageTearcherDialogVisible()
-      let selectTearcherNameArr = []
-      this.chooseArr = []
+    confirmTearcherList(val) {
+      this.chageTearcherDialogVisible();
+      let selectTearcherNameArr = [];
+      this.chooseArr = [];
       val.map(item => {
         this.chooseArr.push(item.uid);
         selectTearcherNameArr.push(item.nickname);
       });
       this.selectTearcherName = selectTearcherNameArr.join(", ");
     },
-    chageTearcherDialogVisible(){
-      this.tdialogVisible = false
+    chageTearcherDialogVisible() {
+      this.tdialogVisible = false;
     },
     /* 
       choose tearcher end
     */
-   /* 
+    /* 
     start choose class 
    */
     showClassList() {
@@ -338,27 +340,25 @@ export default {
     chageDialogVisibleChooseClass() {
       this.dialogVisibleChooseClass = false;
     },
-    choosenClassChange(val) {
-
-    },
+    choosenClassChange(val) {},
     confirmClassListChooseClass(val) {
-      this.chageDialogVisibleChooseClass()
+      this.chageDialogVisibleChooseClass();
       let selectClassNameArr = [];
-      this.editClassArr = []
-      this.choosenClassArr = []
+      this.editClassArr = [];
+      this.choosenClassArr = [];
       val.map(item => {
-        if(this.editClassArr.indexOf(item.id) <0){
-          this.editClassArr.push(item.id)
+        if (this.editClassArr.indexOf(item.id) < 0) {
+          this.editClassArr.push(item.id);
         }
         this.choosenClassArr.push({
           id: item.id,
           title: item.title
-        })
+        });
         selectClassNameArr.push(item.title);
       });
       this.selectClassName = selectClassNameArr.join(", ");
     },
-  /* 
+    /* 
     end choose class
   */
     changeDate() {},
@@ -389,7 +389,7 @@ export default {
             this.choosenClassArr.push({
               id: item.classID,
               title: item.className
-            })
+            });
           });
           this.selectClassName = tempArr.join(", ");
           //end class
@@ -415,7 +415,7 @@ export default {
     },
     //编辑课程
     editCpurse() {
-      console.log(this.choosenClass,this.chooseArr,'qqqqq')
+      console.log(this.choosenClass, this.chooseArr, "qqqqq");
       let tempObj = {
         startTime: "",
         endTime: "",
@@ -519,8 +519,16 @@ export default {
       }
       return isLt2M;
     },
+    //发布课程
     releaseCourse() {
-      
+      this.$store
+        .dispatch("PublishCourses", {
+          courseList: [Number(this.$route.params.id)]
+        })
+        .then(res => {
+          this.$message.success("发布课程成功");
+          this.getCourseDetails();
+        });
     }
   },
   mounted() {

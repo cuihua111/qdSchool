@@ -86,12 +86,14 @@ wh_content_item_tag {
   display: flex;
   justify-content: center;
   align-items: center;
+  color: #323232;
 }
 
 @media screen and (min-width: 460px) {
   .wh_item_date:hover {
-    background: #71c7a5;
+    background: #4dc2fd;
     cursor: pointer;
+    color: #fff;
   }
 }
 
@@ -119,6 +121,7 @@ wh_content_item_tag {
   margin: auto;
   /* border-radius: 100px; */
   background: #409EFF;
+  color: #fff;
   z-index: 2;
 }
 .wh_content_item .wh_other_dayhide {

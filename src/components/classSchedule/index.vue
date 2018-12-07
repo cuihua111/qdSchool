@@ -272,7 +272,9 @@ p {
       }
       .tableBox {
         width: calc(100% - 271px);
+        height: 701px;
         padding:  38px 40px 0 45px;
+        position: relative;
         background-color: #fff;
         .aside {
           border-right: 1px solid #e6e6e6;
@@ -330,6 +332,11 @@ p {
         }
         .el-main {
           padding: 0;
+        }
+        .waitPublishCourses{
+          position: absolute;
+          right: 40px;
+          bottom: 40px;
         }
       }
     }

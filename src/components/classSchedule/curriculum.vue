@@ -19,16 +19,15 @@
               <span>{{item.list_course_period[index1].subjectName}}</span>
               <span class="course_desc">{{item.list_course_period[index1].course_desc}}</span>
               <span>{{item.list_course_period[index1].nickname_teacher}}</span>
-              <s @click="$router.push({path:`/CourseInfo/${item.list_course_period[index1].id}`,query:{currentClass}})">查看</s>
+              <s
+                @click="$router.push({path:`/CourseInfo/${item.list_course_period[index1].id}`,query:{currentClass}})"
+              >查看</s>
               <div class="operationBox">
-                <span class="delete" @click='deleteCourse(item.list_course_period[index1].id)' ></span>
+                <span class="delete" @click="deleteCourse(item.list_course_period[index1].id)"></span>
                 <span class="edit" @click="editCourse(item.list_course_period[index1], item)"></span>
               </div>
             </div>
-            <div
-              v-if="!item.list_course_period[index1]"
-              class="rows noCouresCh"
-            >
+            <div v-if="!item.list_course_period[index1]" class="rows noCouresCh">
               <p @click="addCourse(item)">
                 <img src="/static/images/file.png" alt>
                 <span>添加</span>
@@ -57,8 +56,10 @@
         </div>
       </div>
     </div>
+    <el-button @click="releaseCourse" class="waitPublishCourses" type="primary">待发布({{toBeReleased.length}})</el-button>
   </div>
 </template>
+
 <script>
 import moment from "moment";
 import {
@@ -69,10 +70,11 @@ import {
   nextYear
 } from "@/utils/mixin";
 export default {
-  props: ["classID", "currentClass", 'date'],
+  props: ["classID", "currentClass", "date"],
   data() {
     return {
-      courseData: []
+      courseData: [],
+      toBeReleased: [] //待发布
     };
   },
   computed: {
@@ -149,10 +151,10 @@ export default {
     classID() {
       this.getClass();
     },
-    'date.year'(){
+    "date.year"() {
       this.getClass();
     },
-    'date.month'(){
+    "date.month"() {
       this.getClass();
     }
   },
@@ -188,6 +190,27 @@ export default {
           // this.courseData = res.courseList.filter(item => {
           //   return new Date(item.date).getMonth() == new Date().getMonth();
           // });
+          res.courseList.map(item=>{
+            if(item.list_course_period.length!=0){
+              item.list_course_period.map(itemSub=>{
+                if(itemSub.is_published==0){
+                  this.toBeReleased.push(itemSub.id)
+                }
+              })
+            }
+          })
+          console.log(this.toBeReleased)
+        });
+    },
+     //发布课程
+    releaseCourse() {
+      this.$store
+        .dispatch("PublishCourses", {
+          courseList: this.toBeReleased
+        })
+        .then(res => {
+          this.$message.success("发布课程成功");
+          this.getClass();
         });
     },
     //编辑
@@ -216,7 +239,7 @@ export default {
             .then(res => {
               console.log(res);
               this.$message.success("成功删除课程");
-              this.getClass(id)
+              this.getClass(id);
             });
         })
         .catch(() => {
@@ -246,7 +269,7 @@ export default {
     display: flex;
     align-content: center;
     flex-wrap: nowrap;
-     border-bottom: 1px solid #e6e6e6;
+    border-bottom: 1px solid #e6e6e6;
     li {
       display: flex;
       flex-direction: column;
@@ -340,13 +363,13 @@ export default {
             }
           }
           &:hover {
-            transition: all .5s;
+            transition: all 0.5s;
             background-color: rgba(0, 0, 0, 0.5);
             s {
               display: block;
               color: #fff;
             }
-            .operationBox{
+            .operationBox {
               display: block;
               color: #fff;
             }
