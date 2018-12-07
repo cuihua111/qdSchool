@@ -7,6 +7,8 @@ import user from './modules/user'
 import register from './modules/register'
 import addressBook from './modules/addressBook'
 import testScores from './modules/testScores'
+import classScheduleCard from './modules/classScheduleCard'
+import artAssistant from './modules/artAssistant'
 
 Vue.use(Vuex)
 
@@ -15,7 +17,9 @@ const store = new Vuex.Store({
     user,
     register,
     addressBook,
-    testScores
+    testScores,
+    classScheduleCard,
+    artAssistant
   },
   getters
 })
