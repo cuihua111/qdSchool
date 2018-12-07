@@ -82,3 +82,4 @@ export const delCourse = (params) => new Http().require({ api: '/delCourse', par
 export const modifyCourse = (params) => new Http().require({ api: '/modifyCourse', param: params }); //编辑课程
 export const createCourse = (params) => new Http().require({ api: '/createCourse', param: params }); //创建课程
 export const copyCourse = (params) => new Http().require({ api: '/copyCourse', param: params }); //copy课程
+export const publishCourses = (params) => new Http().require({ api: '/publishCourses', param: params }); //发布课程
