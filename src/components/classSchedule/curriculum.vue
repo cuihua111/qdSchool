@@ -177,13 +177,13 @@ export default {
       });
     },
     getClass(id) {
-      let startTime = this.getWeekRange[0].getDate()>9?this.getWeekRange[0].getDate(): '0'+this.getWeekRange[0].getDate()
-      let endTime = this.getWeekRange[1].getDate()>9?this.getWeekRange[1].getDate(): '0'+this.getWeekRange[1].getDate()
+      let firstDayOfWeek= this.getWeekRange[0].getDate()<10?('0'+this.getWeekRange[0].getDate()):this.getWeekRange[0].getDate()
+      let lastDayOfWeek=this.getWeekRange[1].getDate()<10?('0'+this.getWeekRange[1].getDate()):this.getWeekRange[1].getDate()
       this.$store
         .dispatch("GetAllCourseForClass", {
           classID: this.classID,
-          date_start: `${this.date.year}-${this.date.month}-${startTime}}`,
-          date_end: `${this.date.year}-${this.date.month}-${endTime}`
+          date_start: `${this.date.year}-${this.date.month}-${firstDayOfWeek}`,
+          date_end: `${this.date.year}-${this.date.month}-${lastDayOfWeek}`
         })
         .then(res => {
           this.courseData = res.courseList;
@@ -259,11 +259,9 @@ export default {
 
 <style lang="scss" scoped>
 .table {
-  width: 1200px;
   display: block;
   margin: 0 auto;
   overflow: hidden;
-  overflow-x: auto;
   border-left: 0;
   .header {
     display: flex;
