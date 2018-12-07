@@ -24,8 +24,8 @@
           <el-container>
             <el-aside class="aside">
               <div class="classDate">
-                <span>{{nowDate.year}}年</span>
-                <span><i @click="prevDate" class="el-icon-arrow-left changeLeft"></i>{{nowDate.month}}月<i @click="nextDate" class="el-icon-arrow-right changeRight"></i></span>
+                <span>{{nowDate.year}}年{{nowDate.month}}月</span>
+                <span><i @click="prevDate" class="el-icon-arrow-left changeLeft"></i>&nbsp;&nbsp;&nbsp;<i @click="nextDate" class="el-icon-arrow-right changeRight"></i></span>
               </div>
               <div class="classTime">
                 <div>
@@ -55,7 +55,7 @@
   </div>
 </template>
 <script>
-import { getSessionStorage, prevMonth, nextMonth } from "@/utils/mixin";
+import { getSessionStorage, prevMonth, nextMonth, getDayCountOfMonth } from "@/utils/mixin";
 import moment from "moment";
 
 export default {
@@ -72,25 +72,36 @@ export default {
       date: {},
       nowDate: {
         year: '',
-        month: ''
+        month: '',
+        day: ''
       }
     };
   },
   components: {
 		// breadHeader: () => import('@/components/breadHeader/breadHeader.vue'),
-		curriculum: () => import('@/components/classSchedule/curriculum')
+		curriculum: () => import('@/components/classSchedule/curriculum.vue')
 	},
+  computed: {
+    getDayCountOfMonth(){
+      return getDayCountOfMonth(this.nowDate.year, this.nowDate.month)
+    },
+  },
   methods: {
     prevDate(){
-      let date = new Date(this.nowDate.year, this.nowDate.month, '')
-      this.nowDate.year = prevMonth(date).getFullYear()
-      this.nowDate.month = prevMonth(date).getMonth() + 1
-      
+      let date = new Date(this.nowDate.year, this.nowDate.month - 1, this.nowDate.day)
+      let millisecond = 1000 * 60 * 60 * 24;
+      let prevDate = new Date(date.getTime() - 7*millisecond)
+      this.nowDate.year = prevDate.getFullYear()
+      this.nowDate.month = prevDate.getMonth() + 1
+      this.nowDate.day = prevDate.getDate()
     },
     nextDate(){
-      let date = new Date(this.nowDate.year, this.nowDate.month, '')
-      this.nowDate.year = nextMonth(date).getFullYear()
-      this.nowDate.month = nextMonth(date).getMonth() + 1
+      let date = new Date(this.nowDate.year, this.nowDate.month - 1, this.nowDate.day)
+      let millisecond = 1000 * 60 * 60 * 24;
+      let prevDate = new Date(date.getTime() + 7*millisecond)
+      this.nowDate.year = prevDate.getFullYear()
+      this.nowDate.month = prevDate.getMonth() + 1
+      this.nowDate.day = prevDate.getDate()
     },
     loadRepeat() {
       var self = this;
@@ -177,6 +188,7 @@ export default {
     let date = this.getDate()
     this.nowDate.year = date.getFullYear()
     this.nowDate.month = date.getMonth() + 1
+    this.nowDate.day = date.getDate()
   }
 };
 </script>

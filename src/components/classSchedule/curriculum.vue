@@ -80,33 +80,62 @@ export default {
       return new Date().getMonth();
     },
     week() {
-      return getFirstDayOfMonth(new Date(this.date.year, this.date.month, ""));
+      return getFirstDayOfMonth(new Date(this.date.year, this.date.month, this.date.day));
     },
     WEEKS() {
       return [
-        "星期日",
         "星期一",
         "星期二",
         "星期三",
         "星期四",
         "星期五",
-        "星期六"
+        "星期六",
+        "星期日",
       ];
+    },
+    // 计算每周起始时间对象
+    getWeekRange(){
+      let startStop = []
+      let currDate = new Date(this.date.year, this.date.month - 1, this.date.day)
+      let week = currDate.getDay() //今天是周几
+      let millisecond = 1000 * 60 * 60 * 24;
+      //减去的天数
+      let minusDay = week != 0 ? week - 1 : 6;
+      //本周 周一
+      let monday = new Date(currDate.getTime() - (minusDay * millisecond));
+      //本周 周日
+      let sunday = new Date(monday.getTime() + (6 * millisecond));
+      //添加本周时间
+      startStop.push(monday); //本周起始时间
+      startStop.push(sunday)
+      return startStop
+    },
+    getWeekRangeArr(){
+      let millisecond = 1000 * 60 * 60 * 24;  //一天毫秒数
+      let monday = this.getWeekRange[0]  //时间戳
+      let sunday = this.getWeekRange[1]
+      let res = []
+      for(let i = 0; i< 7; i++){
+        res.push(new Date(monday.getTime() + (i*millisecond)))
+      }
+      return res
     },
     dayList() {
       let res = [];
-      for (
-        let i = 0;
-        i < getDayCountOfMonth(this.date.year, this.date.month);
-        i++
-      ) {
+      this.WEEKS.map((item, index)=>{
         res.push({
-          day: i + 1,
-          week: this.WEEKS[
-            this.week + i < 7 ? this.week + i : (this.week + i) % 7
-          ]
-        });
-      }
+          day: this.getWeekRangeArr[index].getDate(),
+          week: item
+        })
+      })
+      // for (let i = 0; i < getDayCountOfMonth(this.date.year, this.date.month); i++) {
+      //   res.push({
+      //     day: i + 1,
+      //     week: this.WEEKS[
+      //       this.week + i < 7 ? this.week + i : (this.week + i) % 7
+      //     ]
+      //   });
+      // }
       return res;
     }
   },
@@ -122,6 +151,7 @@ export default {
     }
   },
   methods: {
+
     getLength(u) {
       if (u >= 3) {
         return 0;
@@ -143,8 +173,8 @@ export default {
       this.$store
         .dispatch("GetAllCourseForClass", {
           classID: this.classID,
-          date_start: `${this.date.year}-${this.date.month}-01`,
-          date_end: `${this.date.year}-${this.date.month}-31`
+          date_start: `${this.date.year}-${this.date.month}-${this.getWeekRange[0].getDate()}`,
+          date_end: `${this.date.year}-${this.date.month}-${this.getWeekRange[1].getDate()}`
         })
         .then(res => {
           this.courseData = res.courseList;
