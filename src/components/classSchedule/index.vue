@@ -2,7 +2,7 @@
   <div class="classSchedule">
     <div class="container">
       <div class="title">
-        <div class="back">
+        <div class="back" @click="$router.go(-1)">
           <img src="/static/images/back_blue.png" alt>
           <span>返回</span>
         </div>课程表

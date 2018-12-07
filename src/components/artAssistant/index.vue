@@ -42,6 +42,12 @@
           </el-form-item>
           <el-form-item>
             <el-button class="exportBtn" type="primary" @click="exportExcel">导出</el-button>
+            <el-button
+            v-if="false"
+              class="viewProgress"
+              type="primary"
+              @click="progressDialogVisible = true"
+            >查看导出进度</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -53,6 +59,12 @@
       :dialogVisible="dialogVisible"
       :classList="classList"
     ></chooseClass>
+    <el-dialog :visible.sync="progressDialogVisible" width="30%">
+      <el-progress :percentage="70"></el-progress>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="progressDialogVisible = false">关闭</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -68,6 +80,7 @@ export default {
       schoolList: [],
       tipText1: "请选择需要导出表格的院校",
       schoolID: null,
+      progressDialogVisible: false, //进度条显示
       classList: [], //所有班级列表
       choosenClass: [], //已选择的班级
       choosenSchool: [] //存已选择的院校
@@ -75,9 +88,9 @@ export default {
   },
 
   methods: {
-    confirmClassList(val){
-      this.chageDialogVisible()
-      this.choosenClass = val
+    confirmClassList(val) {
+      this.chageDialogVisible();
+      this.choosenClass = val;
     },
     backToHome() {
       this.$router.go(-1);
@@ -99,8 +112,8 @@ export default {
         });
     },
     dropdownChoose(command) {
-        this.choosenSchool.push(command);
-      console.log(this.choosenSchool, 'asas')
+      this.choosenSchool.push(command);
+      console.log(this.choosenSchool, "asas");
       let set = new Set(this.choosenSchool);
       this.choosenSchool = Array.from(set);
       this.tipText1 = `已选择${this.choosenSchool.length}个院校`;
@@ -133,12 +146,16 @@ export default {
         this.$message.error("请选择导出班级");
         return;
       }
+      console.log(collegeidArr, classidArr);
+      // return
       params = {
-        list_collegeID: [1,2],
-        list_classID:[25,24]
+        list_collegeID: collegeidArr,
+        list_classID: classidArr
       };
-      this.$store.dispatch("ExportMemberListInExamHelper",params).then(res=>{
-        console.log(res)
+      this.$store.dispatch("ExportMemberListInExamHelper", params).then(res => {
+        console.log(res);
+        this.$message.success('(PC端）艺考助手导出表格成功')
+        location.href=res
       });
     }
   },
@@ -217,6 +234,14 @@ export default {
           background-color: rgba(64, 185, 230, 0.6);
           border: 1px solid rgba(64, 185, 230, 0.6);
           border-radius: 4px;
+        }
+        .viewProgress {
+          height: 32px;
+          line-height: 8px;
+          background-color: #fff;
+          border: 1px solid #333;
+          border-radius: 4px;
+          color: #333;
         }
       }
     }
