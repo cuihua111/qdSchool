@@ -36,24 +36,26 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="任课老师：">
-                <el-select multiple v-model="courseForm.teacherID" placeholder="请选择">
-                  <el-option
-                    v-for="item in teacherList"
-                    :key="item.uid"
-                    :label="item.nickname"
-                    :value="item.uid"
-                  ></el-option>
-                </el-select>
+                <div class="selecteditems" @click="showTeacherList">
+                  {{selectTearcherName}}
+                  <i class="iconarrow el-icon-arrow-down"></i>
+                </div>
+                <!-- courseForm.teacherID -->
               </el-form-item>
               <el-form-item label="上课班级：">
-                <el-select multiple v-model="courseForm.classIDList" placeholder="请选择">
+                <div class="selecteditems" @click="showClassList">
+                  {{selectClassName}}
+                  <i class="iconarrow el-icon-arrow-down"></i>
+                </div>
+                <!-- courseForm.classIDList -->
+                <!-- <el-select multiple v-model="courseForm.classIDList" placeholder="请选择">
                   <el-option
                     v-for="item in classList"
                     :key="item.classID"
                     :label="item.className"
                     :value="item.classID"
                   ></el-option>
-                </el-select>
+                </el-select> -->
               </el-form-item>
               <el-form-item label="上课内容：">
                 <el-input v-model="courseForm.course_desc" type="textarea"></el-input>
@@ -95,6 +97,27 @@
         </div>
       </div>
     </div>
+    <!-- 选择老师组件 -->
+    <choose-teacher
+      v-if="tdialogVisible"
+      @chageDialogVisible="chageTearcherDialogVisible"
+      @confirmTearcherList="confirmTearcherList"
+      :dialogVisible="tdialogVisible"
+      :chooseArr="chooseArr"
+      :tearchList="teacherList"
+    ></choose-teacher>
+    <!-- 选择老师组件 -->
+    <!-- 选择班级组件 -->
+    <chooseClass
+      v-if="dialogVisibleChooseClass"
+      @choosenClassChange="choosenClassChange"
+      @chageDialogVisible="chageDialogVisibleChooseClass"
+      @confirmClassList="confirmClassListChooseClass"
+      :dialogVisible="dialogVisibleChooseClass"
+      :choosenClassArr="choosenClassArr"
+      :classList="classList"
+    ></chooseClass>
+    <!-- 选择班级组件 -->
   </div>
 </template>
 <script>
@@ -102,6 +125,13 @@ import { getSessionStorage } from "@/utils/mixin";
 export default {
   data() {
     return {
+      tdialogVisible: false,  //教师弹窗显隐
+      dialogVisibleChooseClass: false,
+      chooseArr: [],
+      choosenClassArr: [],  //组件已选数据
+      editClassArr: [],
+      selectTearcherName: "",
+      selectClassName: "",  //已选班级名称
       titleInfo: {
         centerTitle: "新建课程"
       },
@@ -158,10 +188,68 @@ export default {
     };
   },
   components: {
-    breadHeader: () => import("@/components/breadHeader/breadHeader.vue")
+    breadHeader: () => import("@/components/breadHeader/breadHeader.vue"),
+    chooseTeacher: () => import("@/components/classSchedule/chooseTeacher.vue"),
+    chooseClass: () => import("@/components/chooseClass/index.vue")
     // curriculum: () => import('@/components/curriculum')
   },
   methods: {
+    /*
+      start choose tearcher
+    */
+    showTeacherList() {
+      this.tdialogVisible = true;
+    },
+    confirmTearcherList(val){
+      this.chageTearcherDialogVisible()
+      let selectTearcherNameArr = []
+      this.chooseArr = []
+      val.map(item => {
+        this.chooseArr.push(item.uid);
+        selectTearcherNameArr.push(item.nickname);
+      });
+      this.selectTearcherName = selectTearcherNameArr.join(", ");
+      this.courseForm.teacherID = this.chooseArr;
+    },
+    chageTearcherDialogVisible(){
+      this.tdialogVisible = false
+    },
+    /*
+      choose tearcher end
+    */
+   /*
+    start choose class
+   */
+    showClassList() {
+      this.dialogVisibleChooseClass = true;
+    },
+    chageDialogVisibleChooseClass() {
+      this.dialogVisibleChooseClass = false;
+    },
+    choosenClassChange(val) {
+
+    },
+    confirmClassListChooseClass(val) {
+      this.chageDialogVisibleChooseClass()
+      let selectClassNameArr = [];
+      this.editClassArr = []
+      this.choosenClassArr = []
+      val.map(item => {
+        if(this.editClassArr.indexOf(item.id) <0){
+          this.editClassArr.push(item.id)
+        }
+        this.choosenClassArr.push({
+          id: item.id,
+          title: item.title
+        })
+        selectClassNameArr.push(item.title);
+      });
+      this.selectClassName = selectClassNameArr.join(", ");
+      this.courseForm.classIDList = this.editClassArr;
+    },
+    /*
+      end choose class
+    */
     cancel() {
       this.$router.go(-1);
     },
@@ -220,13 +308,22 @@ export default {
     getAllSubClassList() {
       let _this = this;
       this.$store
-        .dispatch("GetAllSubClassList", {
+        .dispatch("GetAllOrganizationForSchool", {
           schoolID: JSON.parse(getSessionStorage("userInfo")).schoolId
         })
         .then(res => {
           console.log(res);
-          this.classList = res.subClassList;
+          this.classList = res.list_class;
         });
+      // let _this = this;
+      // this.$store
+      //   .dispatch("GetAllSubClassList", {
+      //     schoolID: JSON.parse(getSessionStorage("userInfo")).schoolId
+      //   })
+      //   .then(res => {
+      //     console.log(res);
+      //     this.classList = res.subClassList;
+      //   });
     },
     //删除课程
     deleteCourse() {
@@ -315,6 +412,38 @@ export default {
       background-color: #fff;
       padding: 55px 65px 0;
       .formBox {
+        .selecteditems {
+          cursor: pointer;
+          width: 195px;
+          position: relative;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          -webkit-appearance: none;
+          background-color: #fff;
+          border-radius: 4px;
+          border: 1px solid #dcdfe6;
+          box-sizing: border-box;
+          color: #606266;
+          font-size: inherit;
+          height: 40px;
+          line-height: 40px;
+          outline: none;
+          padding: 0 15px;
+          & > .iconarrow {
+            position: absolute;
+            line-height: 40px;
+            width: 25px;
+            text-align: center;
+            height: 100%;
+            right: 5px;
+            top: 0;
+            text-align: center;
+            color: #c0c4cc;
+            transition: all 0.3s;
+            pointer-events: none;
+          }
+        }
         .kejianList {
           display: flex;
           flex-wrap: wrap;

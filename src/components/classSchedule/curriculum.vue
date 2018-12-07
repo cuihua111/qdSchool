@@ -8,7 +8,7 @@
         </li>
       </ul>
       <div class="body">
-        <div class="columns" v-for="(item, index) in courseData" :key="index">
+        <div class="columns" v-if="courseData.length>0" v-for="(item, index) in courseData" :key="index">
           <div
             class="rows"
             v-if="item.list_course_period.length>0"
@@ -40,6 +40,14 @@
             v-for="(item2, index2) in 3"
             :key="index2+'2'"
           >
+            <p @click="addCourse(item)">
+              <img src="/static/images/file.png" alt>
+              <span>添加</span>
+            </p>
+          </div>
+        </div>
+        <div class="columns" v-if="courseData.length==0" v-for="(item, index) in 7" :key="index">
+          <div class="rows noCoures" v-for="(item2, index2) in 3" :key="index2+'2'">
             <p @click="addCourse(item)">
               <img src="/static/images/file.png" alt>
               <span>添加</span>
@@ -151,7 +159,6 @@ export default {
     }
   },
   methods: {
-
     getLength(u) {
       if (u >= 3) {
         return 0;
