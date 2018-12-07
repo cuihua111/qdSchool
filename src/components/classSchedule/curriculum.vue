@@ -156,7 +156,10 @@ export default {
     },
     "date.month"() {
       this.getClass();
-    }
+    },
+    "date.day"() {
+      this.getClass();
+    },
   },
   methods: {
     getLength(u) {
