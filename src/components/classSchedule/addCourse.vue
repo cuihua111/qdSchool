@@ -55,31 +55,50 @@
                     :label="item.className"
                     :value="item.classID"
                   ></el-option>
-                </el-select> -->
+                </el-select>-->
               </el-form-item>
               <el-form-item label="上课内容：">
                 <el-input v-model="courseForm.course_desc" type="textarea"></el-input>
               </el-form-item>
               <el-form-item>
-                <div class="kejianList">
-                  <div>
-                    <el-upload
-                      class="upload"
-                      action="http://upload-z2.qiniup.com"
-                      :on-success="uploadSuccess"
-                      accept="image/jpeg, image/gif, image/png, image/bmp"
-                      :before-upload="beforeAvatarUpload"
-                      :data="{token:tokenOption.token}"
-                      list-type="picture-card"
-                    >
-                      <!-- v-if="uploadArr.length!=1" -->
-                      <!-- <i style="font-size:26px;" class="el-icon-upload"></i> -->
-                      <img class="uploadImg" src="/static/images/upload.png" alt="">
-                      <div class="el-upload__text">支持添加图片、课件、视频,不超过50M</div>
-                      <!-- <img :src="uploadArr[0]" alt=""> -->
-                    </el-upload>
-                  </div>
-                </div>
+                <el-upload
+                  class="uploadEle"
+                  action="http://upload-z2.qiniup.com"
+                  :on-success="uploadSuccess"
+                  :before-upload="beforeAvatarUpload"
+                  :data="{token:tokenOption.token}"
+                  :disabled="limit==true?true:false"
+                >
+                  <el-button :disabled="limit==true?true:false" type="primary">
+                    请选择视频或者图片
+                    <i class="el-icon-upload el-icon--right"></i>
+                  </el-button>
+                </el-upload>
+                <el-button
+                  type="primary"
+                  :disabled="limit==true?true:false"
+                  @click="showCourseware"
+                >
+                  请选择课件
+                  <i class="el-icon-upload el-icon--right"></i>
+                </el-button>
+                <div>支持添加图片、课件、视频,不超过50M且不超过9个</div>
+              </el-form-item>
+              <el-form-item>
+                <ul class="imglist">
+                  <li
+                    class="el-upload-list__item is-success"
+                    v-for="(item,index) in uploadArr"
+                    :key="index"
+                  >
+                    <img v-if="item.type_material==0" :src="item.accessoryURL" alt>
+                    <video v-else controls="controls" :src="item.accessoryURL"></video>
+                    <label class="el-upload-list__item-status-label">
+                      <i class="el-icon-upload-success el-icon-check"></i>
+                    </label>
+                    <i class="el-icon-close" @click="deleteUploadImg(index)"></i>
+                  </li>
+                </ul>
               </el-form-item>
             </el-form>
           </div>
@@ -99,7 +118,6 @@
     </div>
     <!-- 选择老师组件 -->
     <choose-teacher
-      v-if="tdialogVisible"
       @chageDialogVisible="chageTearcherDialogVisible"
       @confirmTearcherList="confirmTearcherList"
       :dialogVisible="tdialogVisible"
@@ -109,7 +127,6 @@
     <!-- 选择老师组件 -->
     <!-- 选择班级组件 -->
     <chooseClass
-      v-if="dialogVisibleChooseClass"
       @choosenClassChange="choosenClassChange"
       @chageDialogVisible="chageDialogVisibleChooseClass"
       @confirmClassList="confirmClassListChooseClass"
@@ -118,6 +135,16 @@
       :classList="classList"
     ></chooseClass>
     <!-- 选择班级组件 -->
+    <!-- 选择课件组件 -->
+    <chooseClass
+      @choosenCourseware="choosenCourseware"
+      @chageDialogVisible="chageDialogVisibleCourseware"
+      @confirmClassList="confirmClassListCourseware"
+      :dialogVisible="courseware.dialogVisibleCourseware"
+      :choosenClassArr="courseware.choosenCoursewareArr"
+      :classList="courseware.list"
+    ></chooseClass>
+    <!-- 选择课件组件 -->
   </div>
 </template>
 <script>
@@ -125,13 +152,21 @@ import { getSessionStorage } from "@/utils/mixin";
 export default {
   data() {
     return {
-      tdialogVisible: false,  //教师弹窗显隐
+      limit: false,
+      //课件
+      courseware: {
+        list: [],
+        dialogVisibleCourseware: false,
+        choosenCoursewareArr: [], //组件已选数据
+        editCoursewareArr: []
+      },
+      tdialogVisible: false, //教师弹窗显隐
       dialogVisibleChooseClass: false,
       chooseArr: [],
-      choosenClassArr: [],  //组件已选数据
+      choosenClassArr: [], //组件已选数据
       editClassArr: [],
       selectTearcherName: "",
-      selectClassName: "",  //已选班级名称
+      selectClassName: "", //已选班级名称
       titleInfo: {
         centerTitle: "新建课程"
       },
@@ -194,16 +229,55 @@ export default {
     // curriculum: () => import('@/components/curriculum')
   },
   methods: {
+    /**
+     * @description 选择课件相关韩素    start
+     */
+    deleteUploadImg(index) {
+      this.uploadArr.splice(index, 1);
+    },
+    getCoursewareList() {
+      this.$store.dispatch("GetAllMyMaterialkejian", {}).then(res => {
+        this.courseware.list = res.MyMaterialkejianList;
+
+      });
+    },
+    showCourseware() {
+      this.courseware.dialogVisibleCourseware = true;
+    },
+    choosenCourseware(val) {},
+    chageDialogVisibleCourseware() {
+      this.courseware.dialogVisibleCourseware = false;
+    },
+    confirmClassListCourseware(val) {
+      this.chageDialogVisibleCourseware();
+      console.log(val, 33333);
+      // this.courseware.choosenCoursewareArr = [];
+      val.map(item => {
+        if (this.courseware.editCoursewareArr.indexOf(item.id) < 0) {
+          this.courseware.editCoursewareArr.push(item.id);
+          //存入上传列表中
+          if (this.limit) return;
+          this.uploadArr.push({ accessoryURL: item.url_cover, type_material: 0 });
+        } else {
+          this.$message.warning('同一节课程不能重复添加相同的课件')
+        }
+      });
+      this.courseForm.kejianList = this.courseware.editCoursewareArr;
+    },
+    /**
+     * @description 选择课件相关韩素    结束
+     */
+
     /*
       start choose tearcher
     */
     showTeacherList() {
       this.tdialogVisible = true;
     },
-    confirmTearcherList(val){
-      this.chageTearcherDialogVisible()
-      let selectTearcherNameArr = []
-      this.chooseArr = []
+    confirmTearcherList(val) {
+      this.chageTearcherDialogVisible();
+      let selectTearcherNameArr = [];
+      this.chooseArr = [];
       val.map(item => {
         this.chooseArr.push(item.uid);
         selectTearcherNameArr.push(item.nickname);
@@ -211,13 +285,13 @@ export default {
       this.selectTearcherName = selectTearcherNameArr.join(", ");
       this.courseForm.teacherID = this.chooseArr;
     },
-    chageTearcherDialogVisible(){
-      this.tdialogVisible = false
+    chageTearcherDialogVisible() {
+      this.tdialogVisible = false;
     },
     /*
       choose tearcher end
     */
-   /*
+    /*
     start choose class
    */
     showClassList() {
@@ -226,22 +300,20 @@ export default {
     chageDialogVisibleChooseClass() {
       this.dialogVisibleChooseClass = false;
     },
-    choosenClassChange(val) {
-
-    },
+    choosenClassChange(val) {},
     confirmClassListChooseClass(val) {
-      this.chageDialogVisibleChooseClass()
+      this.chageDialogVisibleChooseClass();
       let selectClassNameArr = [];
-      this.editClassArr = []
-      this.choosenClassArr = []
+      this.editClassArr = [];
+      this.choosenClassArr = [];
       val.map(item => {
-        if(this.editClassArr.indexOf(item.id) <0){
-          this.editClassArr.push(item.id)
+        if (this.editClassArr.indexOf(item.id) < 0) {
+          this.editClassArr.push(item.id);
         }
         this.choosenClassArr.push({
           id: item.id,
           title: item.title
-        })
+        });
         selectClassNameArr.push(item.title);
       });
       this.selectClassName = selectClassNameArr.join(", ");
@@ -254,7 +326,6 @@ export default {
       this.$router.go(-1);
     },
     save() {
-      console.log(this.timeChoose);
       this.courseForm.startTime = this.timeChoose.split("-")[0];
       this.courseForm.startTime =
         this.currentDate.split(" ")[0] +
@@ -272,7 +343,6 @@ export default {
       this.$store
         .dispatch("GetCourseDetails", { courseID: this.$route.params.id })
         .then(res => {
-          console.log(res);
           this.courseDetails = res;
           this.isRelease = res.is_published == 0 ? false : true;
           this.titleInfo.rightTitle.isRelease =
@@ -312,7 +382,6 @@ export default {
           schoolID: JSON.parse(getSessionStorage("userInfo")).schoolId
         })
         .then(res => {
-          console.log(res);
           this.classList = res.list_class;
         });
       // let _this = this;
@@ -335,34 +404,52 @@ export default {
     },
     //上传图片成功回调
     uploadSuccess(res, file, lll) {
-      console.log(res, file, lll, this.tokenOption.bucketUrl);
-      this.uploadArr.push(this.tokenOption.bucketUrl + "/" + res.key);
+      if (this.limit) {
+        return;
+      }
+      this.uploadArr.push({
+        accessoryURL: this.tokenOption.bucketUrl + "/" + res.key,
+        type_material: file.raw.type.includes("image") ? 0 : 1,
+      });
       this.courseForm.accessoryList.push({
-        type_material: file.raw.type == "image/png" ? 0 : 1,
+        type_material: file.raw.type.includes("image") ? 0 : 1,
         accessoryURL: this.tokenOption.bucketUrl + "/" + res.key
       });
-      console.log(this.uploadArr.length);
     },
     //获取七牛云token
     getUploadToken() {
       this.$store.dispatch("GetUploadToken").then(res => {
-        console.log(res);
+
         this.tokenOption = res;
       });
     },
     beforeAvatarUpload(file) {
       const isLt2M = file.size / 1024 / 1024 < 50;
-
       if (!isLt2M) {
         this.$message.error("上传头像图片大小不能超过 2MB!");
       }
       return isLt2M;
     }
   },
+  watch: {
+    uploadArr: {
+      handler(newValue, oldValue) {
+        console.log(newValue,1111)
+        if (newValue.length == 9) {
+          this.$message.warning("视频、图片、课件总数不能超过9个");
+          this.limit = true;
+        } else {
+          this.limit = false;
+        }
+      },
+      deep: true
+    }
+  },
   mounted() {
     // if (this.isEdit) {
     this.getAllTeachersOfSchool();
     this.getAllSubClassList();
+    this.getCoursewareList();
     // }
     this.getUploadToken();
   },
@@ -466,7 +553,7 @@ export default {
               line-height: 25px;
               border: 1px solid #e6e6e6;
               padding: 20px 0;
-              i{
+              i {
                 color: #f84c4c;
               }
             }
@@ -475,7 +562,7 @@ export default {
               height: 172px;
               border-radius: 4px;
               margin-right: 10px;
-              &.uploadImg{
+              &.uploadImg {
                 width: 26px;
                 height: 26px;
                 margin-right: 0;
@@ -511,12 +598,12 @@ export default {
               color: #f84c4c;
             }
           }
-          .saveForm{
+          .saveForm {
             background-color: #fff;
             border: 1px solid #40b9e6;
             color: #40b9e6;
           }
-          .publishForm{
+          .publishForm {
             background-color: #40b9e6;
             color: #fff;
           }
@@ -532,7 +619,66 @@ export default {
           line-height: 30px;
         }
       }
+      .imglist {
+        display: flex;
+        flex-wrap: wrap;
+        li {
+          width: 125px;
+          height: 172px;
+          border-radius: 4px;
+          margin-right: 10px;
+          border: 1px solid #e6e6e6;
+          margin-right: 10px;
+          img {
+            width: 100%;
+            height: 100%;
+          }
+          video {
+            width: 100%;
+            height: 100%;
+          }
+        }
+      }
     }
+  }
+  .uploadEle {
+    display: inline-block;
+    &:nth-of-type(2) {
+      margin-left: 20px;
+    }
+  }
+  .el-upload-list {
+    display: none;
+  }
+  .el-upload-list__item {
+    overflow: hidden;
+    z-index: 0;
+    background-color: #fff;
+    border: 1px solid #c0ccda;
+    border-radius: 6px;
+    box-sizing: border-box;
+    margin-top: 10px;
+    height: 92px;
+  }
+  .el-upload-list__item-status-label {
+    position: absolute;
+    right: -17px;
+    top: -7px;
+    width: 46px;
+    height: 26px;
+    background: #13ce66;
+    text-align: center;
+    transform: rotate(45deg);
+    box-shadow: 0 1px 1px #ccc;
+    color: #fff;
+  }
+  .el-upload-list__item-status-label i {
+    font-size: 12px;
+    margin-top: 12px;
+    transform: rotate(-45deg);
+  }
+  .el-upload-list__item .el-icon-check {
+    color: #fff;
   }
 }
 </style>

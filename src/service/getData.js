@@ -83,3 +83,4 @@ export const modifyCourse = (params) => new Http().require({ api: '/modifyCourse
 export const createCourse = (params) => new Http().require({ api: '/createCourse', param: params }); //创建课程
 export const copyCourse = (params) => new Http().require({ api: '/copyCourse', param: params }); //copy课程
 export const publishCourses = (params) => new Http().require({ api: '/publishCourses', param: params }); //发布课程
+export const getAllMyMaterialkejian = (params) => new Http().require({ api: '/getAllMyMaterialkejian', param: params }); //获取所有课件

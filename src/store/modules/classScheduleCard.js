@@ -9,7 +9,8 @@ import {
     modifyCourse,
     createCourse,
     copyCourse,
-    publishCourses
+    publishCourses,
+    getAllMyMaterialkejian
 } from '@/service/getData'
 const classScheduleCard = {
     actions: {
@@ -109,18 +110,30 @@ const classScheduleCard = {
                 })
             })
         },
-         /*
-        * 发布课程
-        * */
-       PublishCourses({ commit, state }, parameterData) {
-        return new Promise((resolve, reject) => {
-            publishCourses(parameterData).then(response => {
-                resolve(response)
-            }, err => {
-                reject(err)
+        /*
+       * 发布课程
+       * */
+        PublishCourses({ commit, state }, parameterData) {
+            return new Promise((resolve, reject) => {
+                publishCourses(parameterData).then(response => {
+                    resolve(response)
+                }, err => {
+                    reject(err)
+                })
             })
-        })
-    },
+        },
+        /*
+     * 获取所有课件
+     * */
+        GetAllMyMaterialkejian({ commit, state }, parameterData) {
+            return new Promise((resolve, reject) => {
+                getAllMyMaterialkejian(parameterData).then(response => {
+                    resolve(response)
+                }, err => {
+                    reject(err)
+                })
+            })
+        },
     }
 }
 export default classScheduleCard
